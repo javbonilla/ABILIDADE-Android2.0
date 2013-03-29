@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="negro">#000000</color>
+	<color name="grisFondoPantalla">#E7EBE7</color>
+	<color name="gris_oscuro">#5B5B5B</color>
+	<color name="blanco">#FFFFFF</color>
+	<color name="blanco_oscurecido">#EDEDED</color>
+	<color name="azulFondoPantalla">#5E9BBA</color>
+</resources>

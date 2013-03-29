@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style name="altaPuntoTextoPlano" parent="@android:style/TextAppearance.Medium">
+		<item name="android:textSize">14sp</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textColor">@color/negro</item>
+	</style>
+	
+	<style name="altaPuntoTextoPlanoBlanco" parent="@android:style/TextAppearance.Medium">
+		<item name="android:textSize">16sp</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textColor">@color/blanco</item>
+	</style>
+	
+	<style name="detallePuntoTextoTitulo" parent="@android:style/TextAppearance.Large">
+	    <item name="android:textSize">16sp</item>
+	    <item name="android:textStyle">bold</item>
+	    <item name="android:textColor">@color/negro</item>
+	</style>
+	
+	<style name="detallePuntoTextoDireccion" parent="@android:style/TextAppearance.Large">
+	    <item name="android:textSize">14sp</item>
+	    <item name="android:textStyle">italic</item>
+	    <item name="android:textColor">@color/gris_oscuro</item>
+	</style>
+	
+	<style name="detallePuntoTextoDescripcion" parent="@android:style/TextAppearance.Medium">
+	    <item name="android:textSize">14sp</item>
+	    <item name="android:textColor">@color/negro</item>
+	</style>
+	
+	<style name="ayudaAltaPuntoTextoCabecera" parent="@android:style/TextAppearance.Medium">
+	    <item name="android:textSize">14sp</item>
+	    <item name="android:textColor">@color/negro</item>
+	    <item name="android:textStyle">bold</item>
+	</style>
+	
+	<style name="ayudaAltaPuntoTextoDescripcion" parent="@android:style/TextAppearance.Medium">
+	    <item name="android:textSize">14sp</item>
+	    <item name="android:textColor">@color/negro</item>
+	</style>
+	
+	<style name="detallePuntoNoImagenes" parent="@android:style/TextAppearance.Medium">
+	    <item name="android:textSize">14sp</item>
+	    <item name="android:textColor">@color/gris_oscuro</item>
+	    <item name="android:textStyle">italic</item>
+	</style>
+	
+	<style name="balloonTextoTitulo" parent="@android:style/TextAppearance.Medium">
+	    <item name="android:textSize">14sp</item>
+	    <item name="android:textStyle">bold</item>
+	    <item name="android:textColor">@color/negro</item>	    
+	</style>
+	
+	<style name="balloonTextoDireccion" parent="@android:style/TextAppearance.Small">
+	    <item name="android:textSize">12sp</item>
+	    <item name="android:textColor">@color/gris_oscuro</item>
+	</style>
+	
+	<style name="buttonTextStyle" parent="@android:style/TextAppearance.Large">
+		<item name="android:textColor">@color/blanco</item>	    
+		<item name="android:textSize">18sp</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textColorHighlight">#A5CB29</item>
+	</style>
+	
+	<style name="loginTextoAcceder" parent="@android:style/TextAppearance.Medium">
+		<item name="android:textSize">24sp</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textColor">@color/blanco</item>
+	</style>
+	
+	<style name="loginTextoOlvidastePassword" parent="@android:style/TextAppearance.Small">
+		<item name="android:textSize">14sp</item>
+		<item name="android:textColor">@color/blanco</item>
+	</style>
+
+</resources>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="org.abilidade"
+      android:versionCode="3"
+      android:versionName="3.0">
+    <uses-sdk android:minSdkVersion="4" />
+    <application android:icon="@drawable/icon" 
+    	android:label="@string/app_name"
+    	android:name=".application.AbilidadeApplication"
+    	>
+        <activity android:name=".activities.MainActivity"
+                  android:label="@string/app_name"
+                  android:theme="@style/Theme.ActionBar"
+                  android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".activities.AltaPuntoActivity"
+        	android:theme="@style/Theme.ActionBar"
+        	android:screenOrientation="portrait" 
+        />
+        <activity android:name=".mapa.MapaActivity"
+            android:theme="@style/Theme.ActionBar"
+            android:screenOrientation="portrait"
+        />
+        <activity android:name=".activities.DetallePuntoActivity"
+            android:theme="@style/Theme.ActionBar"
+            android:screenOrientation="portrait"
+        />
+        <activity android:name=".activities.AyudaAltaPunto"
+            android:theme="@style/Theme.ActionBar"
+            android:screenOrientation="portrait"
+        />
+        <activity android:name=".activities.AyudaMapa"
+            android:theme="@style/Theme.ActionBar"
+            android:screenOrientation="portrait"
+        />
+        <activity android:name=".activities.RutasAccesiblesActivity"
+            android:theme="@style/Theme.ActionBar"
+            android:screenOrientation="portrait"
+        />
+        <activity android:name=".activities.webViewActivity"
+            android:theme="@style/Theme.ActionBar"
+            android:screenOrientation="portrait"
+        />
+        <activity android:name="org.abilidade.activities.AccederActivity"
+            android:screenOrientation="portrait"
+        />
+        <activity android:name="org.abilidade.activities.CrearCuentaActivity"
+            android:screenOrientation="portrait"
+        />
+        <activity android:name="org.abilidade.activities.ConfirmarUsuarioActivity"
+            android:screenOrientation="portrait"
+        />
+        <activity android:name=".activities.ZoomImagenActivity" />
+        <activity android:name=".activities.BienvenidaActivity"
+            	  android:screenOrientation="portrait"> 
+        	<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <provider android:name=".db.PuntoProvider"
+        	android:authorities="org.abilidade.punto" />
+        <uses-library android:name="com.google.android.maps" />
+    </application>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+</manifest>
