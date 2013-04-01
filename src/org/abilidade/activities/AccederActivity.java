@@ -18,6 +18,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -52,7 +54,7 @@ public class AccederActivity extends Activity {
 	
 	// Constantes necesarias para el funcionamiento del acceso
 	
-	private String sURLConnect = "http://abilidade.eu/r/loginmovil/acces.php";
+	private final String sURLConnect = "http://abilidade.eu/r/loginmovil/acces.php";
 	
 	// ************************** DEFINICION DE METODOS DE LA CLASE  ************************** //
 
@@ -68,7 +70,12 @@ public class AccederActivity extends Activity {
 		editTextPassword      = (EditText) findViewById(R.id.loginTextoPassword);
 		buttonAcceder         = (Button)   findViewById(R.id.loginBotonAcceder);
 		buttonCrearCuenta     = (Button)   findViewById(R.id.loginBotonCrearCuenta);
-		textViewOlvidastePass = (TextView) findViewById(R.id.loginTextoOlvidarPassword); 
+		textViewOlvidastePass = (TextView) findViewById(R.id.loginTextoOlvidarPassword);
+		
+		// Formato para el texto de olvidaste password
+		SpannableString content = new SpannableString(textViewOlvidastePass.getText().toString()); 
+		content.setSpan(new UnderlineSpan(), 0, content.length(), 0); 
+		textViewOlvidastePass.setText(content); 
 		
 		// Accion en caso de pulsar el boton de login
 		buttonAcceder.setOnClickListener(new View.OnClickListener() {
@@ -107,6 +114,15 @@ public class AccederActivity extends Activity {
 				Intent i=new Intent(AccederActivity.this, CrearCuentaActivity.class);
 				startActivity(i); 
 				
+			}
+		});
+		
+		// Accion en caso de pulsar el texto de Olvidaste tu password
+		textViewOlvidastePass.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Toast.makeText(getApplicationContext(), "Has pulsado en olvidaste tu password", Toast.LENGTH_LONG).show();	
 			}
 		});
 	}

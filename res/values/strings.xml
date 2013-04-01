@@ -73,6 +73,8 @@
 	<string name="accesoIncorrectoPassword">La contraseña no coincide para la dirección de e-mail indicada</string>
 	<string name="accesoIncorrectoUsuarioNoActivo">Usuario no activo. Por favor, active su cuenta de usuario</string>
 	<string name="accesoIncorrectoError">Error al validar usuario. Por favor, inténtelo de nuevo más tarde</string>
+	<string name="altaIncorrectaError">Error al registrar el usuario. Por favor, inténtelo de nuevo más tarde</string>
+	<string name="altaIncorrectaUsuarioExiste">El correo electrónico que intenta dar de alta ya existe en la aplicación</string>
 	<string name="enviandoDatos">Enviando datos. Espere, por favor...</string>
 	<string name="confirmarUsuario">Confirmar usuario</string>
 	<string name="confirmarUsuarioTextoPlanoI">En breves momentos recibirá un correo electrónico de confirmación de usuario en la dirección de correo que indicó.</string>

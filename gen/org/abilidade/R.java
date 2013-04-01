@@ -906,6 +906,8 @@ containing a value of this type.
         public static final int accesoIncorrectoPassword=0x7f080060;
         public static final int accesoIncorrectoUsuario=0x7f08005f;
         public static final int accesoIncorrectoUsuarioNoActivo=0x7f080061;
+        public static final int altaIncorrectaError=0x7f080063;
+        public static final int altaIncorrectaUsuarioExiste=0x7f080064;
         public static final int altaPuntoElegirGaleria=0x7f080030;
         public static final int altaPuntoFalloFotoTomada=0x7f080032;
         public static final int altaPuntoFalloTomarFoto=0x7f080037;
@@ -936,9 +938,9 @@ containing a value of this type.
         public static final int ayudaAltaPuntoTitulo=0x7f080047;
         public static final int ayudaMapaDescrMapa=0x7f080056;
         public static final int confirmarPassword=0x7f080026;
-        public static final int confirmarUsuario=0x7f080064;
-        public static final int confirmarUsuarioTextoPlanoI=0x7f080065;
-        public static final int confirmarUsuarioTextoPlanoII=0x7f080066;
+        public static final int confirmarUsuario=0x7f080066;
+        public static final int confirmarUsuarioTextoPlanoI=0x7f080067;
+        public static final int confirmarUsuarioTextoPlanoII=0x7f080068;
         public static final int correoEOpcional=0x7f08002b;
         public static final int crearCuenta=0x7f080029;
         public static final int descripcionOpcional=0x7f08002a;
@@ -947,7 +949,7 @@ containing a value of this type.
         public static final int direccion=0x7f080021;
         public static final int direccionCorreo=0x7f080024;
         public static final int elMapa=0x7f080055;
-        public static final int enviandoDatos=0x7f080063;
+        public static final int enviandoDatos=0x7f080065;
         public static final int errorDetallePunto=0x7f080045;
         public static final int gd_add=0x7f08000b;
         public static final int gd_all_friends=0x7f080017;

@@ -1,8 +1,16 @@
 package org.abilidade.activities;
 
+import java.util.ArrayList;
+
 import org.abilidade.R;
 import org.abilidade.activities.AccederActivity.asynclogin;
 import org.abilidade.application.AbilidadeApplication;
+import org.abilidade.network.Httppostaux;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,11 +49,19 @@ public class CrearCuentaActivity extends Activity {
 	
 	private ProgressDialog pDialog;
 	
+	private Httppostaux post;
+	
+	// Constantes necesarias para el funcionamiento del acceso
+	
+	private final String sURLConnect = "http://abilidade.eu/r/loginmovil/adduser.php";
+	
 	// ************************** DEFINICION DE METODOS DE LA CLASE  ************************** //
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.crear_cuenta);
+		
+		post = new Httppostaux();
 		
 		// Localizar los elementos de pantalla
 		editTextEmail             = (EditText) findViewById(R.id.crearCuentaTextoEmail);
@@ -144,9 +160,64 @@ public class CrearCuentaActivity extends Activity {
 	    Toast.makeText(getApplicationContext(),mensajeError, Toast.LENGTH_LONG).show();
 	}
 	
-	public boolean enviarDatos() {
-		//TODO Aqui es donde tendre que enviar los datos, por ahora retorno true siempre
-		return true;
+	public int enviarDatos() {
+		
+		int iRetorno = 0;
+		
+		// Se crea un ArrayList del tipo nombre valor para agregar los datos recibidos por los parametros anteriores
+   	    // y enviarlo mediante POST al sistema para realizar la validacion
+		ArrayList<NameValuePair> postparameters2send= new ArrayList<NameValuePair>();
+		
+		Log.d("Crear usuario","Creo el ArrayList");
+		
+		postparameters2send.add(new BasicNameValuePair("usuario",sUsuario));
+		postparameters2send.add(new BasicNameValuePair("password",sPassword));
+		
+		Log.d("Crear usuario","Creo los parametros usuario y password");
+		
+		// Se realiza una peticion y como respuesta se obtiene un array JSON
+		JSONArray jdata = post.getserverdata(postparameters2send, sURLConnect);
+		
+		Log.d("Crear usuario","Acabo de recibir el JSONArray");
+		
+		// Si lo que se obtiene de la peticion no es NULL
+    	if (jdata!=null && jdata.length() > 0){
+
+    		JSONObject jsonData; 
+			int iCreateAccountStatus = -1;
+			
+			try {
+				jsonData = jdata.getJSONObject(0); //leemos el primer segmento en nuestro caso el unico
+				iCreateAccountStatus = jsonData.getInt("createaccountstatus");//accedemos al valor 
+				Log.d("createaccountstatus","iCreateAccountStatus= "+iCreateAccountStatus);//muestro por log que obtuvimos
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}		            
+             
+			// Se valida el valor obtenido
+			
+			Log.d("iCreateAccountStatus",""+iCreateAccountStatus);
+			
+			switch (iCreateAccountStatus) {
+				case 0:
+					Log.d("loginstatus", "alta de usuario realizada correctamente");
+					break;
+				case 1:
+					Log.d("loginstatus", "el usuario ya existia en la BD");
+					break;
+				default:
+					Log.d("loginstatus", "error sql al insertar el usuario en la BD");
+					break;					
+			}
+			
+			iRetorno = iCreateAccountStatus;
+    		 
+    	}else{	// JSON obtenido invalido, revisar parte web
+    		Log.e("Login usuario (JSON)", "JSON obtenido invalido, revisar parte web");
+	    	iRetorno = -1;
+    	}
+		
+		return iRetorno;
 	}
 	
 	/*		CLASE ASYNCTASK
@@ -165,11 +236,16 @@ public class CrearCuentaActivity extends Activity {
 	    }
 
 		protected String doInBackground(String... params) {
-			// Se validan los datos contra la BD
-			if (enviarDatos() == true) {    		    		
-				return AbilidadeApplication.RETORNO_OK; //login valido
-			} else {    		
-				return AbilidadeApplication.RETORNO_KO; //login invalido     	          	  
+			// Se crea el usuario en la BD
+			int iRetornoValidacion = enviarDatos();
+						
+			switch (iRetornoValidacion) {
+				case 0:
+					return AbilidadeApplication.RETORNO_OK; //alta realizada correctamente
+				case 1:
+					return AbilidadeApplication.RETORNO_KO_USUARIO; //alta invalida - el usuario ya existia
+				default:
+					return AbilidadeApplication.RETORNO_KO_ERROR; //alta invalida - error SQL
 			}
 	    	
 		}
@@ -186,7 +262,11 @@ public class CrearCuentaActivity extends Activity {
 			   finish();
 				
 	        }else{
-	        	errLogin(getString(R.string.accesoIncorrecto));
+	        	if (result.equals(AbilidadeApplication.RETORNO_KO_USUARIO)) {
+        			errLogin(getString(R.string.altaIncorrectaUsuarioExiste));
+        		} else {
+        			errLogin(getString(R.string.altaIncorrectaError));
+        		}
 	        }
 	     }
 	}
