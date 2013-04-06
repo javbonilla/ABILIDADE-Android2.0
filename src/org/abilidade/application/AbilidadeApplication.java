@@ -68,6 +68,18 @@ public class AbilidadeApplication extends GDApplication {
 	public static final String RETORNO_KO_USUACTIVO = "ko_usuactivo";
 	public static final String RETORNO_KO_ERROR = "ko_error";
 	
+	// Longitud de la password
+	public static final int LONGITUD_PASSWORD = 4;
+	
+	// SharedPreferences de la aplicacion
+	public static final String SHARED_PREFERENCES = "AbilidadeShPf";
+	public static final String SHPF_PRIMERA_VEZ   = "AbilidadeShPfPrimeraVez";
+	public static final String SHPF_USUARIO       = "AbilidadeShPfUsuario";
+	
+	// Retornos de la pantalla de bienvenida
+	public static final String RETORNO_BIENVENIDA_ACCEDER = "RetornoBienvenidaAcceder";
+	public static final String RETORNO_BIENVENIDA_MAIN = "RetornoBienvenidaMain";
+	
 	@Override
 	public Class<?> getHomeActivityClass() {
 		return MainActivity.class;

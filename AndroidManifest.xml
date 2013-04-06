@@ -50,6 +50,9 @@
         <activity android:name="org.abilidade.activities.ConfirmarUsuarioActivity"
             android:screenOrientation="portrait"
         />
+        <activity android:name="org.abilidade.activities.AjustesActivity"
+            android:screenOrientation="portrait"
+        />
         <activity android:name=".activities.ZoomImagenActivity" />
         <activity android:name=".activities.BienvenidaActivity"
             	  android:screenOrientation="portrait"> 

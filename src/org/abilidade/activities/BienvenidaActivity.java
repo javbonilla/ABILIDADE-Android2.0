@@ -1,17 +1,30 @@
 package org.abilidade.activities;
 
 import org.abilidade.R;
+import org.abilidade.activities.AccederActivity.asynclogin;
+import org.abilidade.application.AbilidadeApplication;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 public class BienvenidaActivity extends Activity {
+	
+	// ************************** DEFINICION DE ATRIBUTOS DE LA CLASE  ************************** //
+	
+	private ProgressDialog pDialog;
+	
+	// ************************** DEFINICION DE METODOS DE LA CLASE  ************************** //
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -23,13 +36,14 @@ public class BienvenidaActivity extends Activity {
         setContentView(R.layout.bienvenida);
         
         if (comprobarConexion()) {
-        	// Hacemos que se muestre la pantalla por un tiempo corto
-            Thread splashThread = new Thread() {
+        	
+        	// Se muestra la pantalla de bienvenida por un espacio corto de tiempo
+            /*Thread splashThread = new Thread() {
                 @Override
                 public void run() {
                    try {
                       int waited = 0;
-                      while (waited < 5000) {
+                      while (waited < 1000) {
                          sleep(100);
                          waited += 100;
                       }
@@ -43,9 +57,12 @@ public class BienvenidaActivity extends Activity {
                    }
                 }
              };
-             splashThread.start();
+             splashThread.start();*/
+             
+             // Se usa una tarea asincrona para poder mostrar mientras tanto un ProgessDialog
+ 			new asynclogin().execute();
        } else {
-    	Toast.makeText(getApplicationContext(), "Necesita conexión a Internet para poder ejecutar la aplicación", Toast.LENGTH_LONG).show();
+    	Toast.makeText(getApplicationContext(), getString(R.string.bienvenidaConexionInternet), Toast.LENGTH_LONG).show();
     	finish();
 	   }
     }
@@ -57,5 +74,97 @@ public class BienvenidaActivity extends Activity {
 		} else {
 			return cm.getActiveNetworkInfo().isConnectedOrConnecting();
 		}
+	}
+	
+	/*		CLASE ASYNCTASK
+	 * Se usa esta clase para poder mostrar el dialogo de progreso mientras se configuran los datos de acceso a la aplicacion     
+	 */
+
+	class asynclogin extends AsyncTask< String, String, String > {
+		 
+		protected void onPreExecute() {
+	    	//para el progress dialog
+	        pDialog = new ProgressDialog(BienvenidaActivity.this);
+	        pDialog.setMessage(getString(R.string.cargandoEsperePorFavor));
+	        pDialog.setIndeterminate(false);
+	        pDialog.setCancelable(false);
+	        pDialog.show();
+	    }
+
+		protected String doInBackground(String... params) {
+			
+			boolean bPrimeraVez;
+			Editor editor;
+			String sUsuario;
+			
+			// 1. Lo primero que se va a hacer es comprobar si es la primera vez que se arranca la aplicacion
+			//    Para ello, se recuperan las SharedPreferences y se comprueba el parametro "primeraVez"
+			//    - Si es la primera vez, se cargan los parametros y se pone "primeraVez" a false
+			//    - Si no es la primera vez, se cargan los parametros de la sesion anterior
+			SharedPreferences pref = getApplicationContext().getSharedPreferences(AbilidadeApplication.SHARED_PREFERENCES, 0); // 0 - for private mode
+			editor = pref.edit();
+			
+			bPrimeraVez = pref.getBoolean(AbilidadeApplication.SHPF_PRIMERA_VEZ, true);
+			
+			Log.d("bienvenida","bPrimeraVez: "+bPrimeraVez);
+			
+			if (bPrimeraVez) {
+				
+				Log.d("bienvenida","primera vez que se arranca la aplicacion");
+				
+				// Pongo el ShPf "usuario" a null y accedo a la pantalla AccederActivity
+				editor.putString(AbilidadeApplication.SHPF_USUARIO, "");
+				
+				// Indico que ya se ha ejecutado la aplicacion por primera vez
+				editor.putBoolean(AbilidadeApplication.SHPF_PRIMERA_VEZ, false);
+				
+				// Salvo los cambios en las ShPf
+				editor.commit();
+				
+				return AbilidadeApplication.RETORNO_BIENVENIDA_ACCEDER;
+				
+			} else {
+				
+				// Recupero el ShPf "usuario" y lo compruebo:
+				// - Si esta informado, accedo a la pantalla MainActivity sin pasar por AccederActivity
+				// - Si no lo esta, accedo a la pantalla AccederActivity
+				sUsuario = pref.getString(AbilidadeApplication.SHPF_USUARIO, null);
+				
+				Log.d("bienvenida", "Valor de sUsuario: "+sUsuario);
+				
+				if (sUsuario.equals("")) {
+					Log.d("bienvenida","No me llega usuario, voy a AccederActivity");
+					
+					return AbilidadeApplication.RETORNO_BIENVENIDA_ACCEDER;
+				} else {
+					
+					Log.d("bienvenida","Si me llega usuario, voy a MainActivity");
+					
+					return AbilidadeApplication.RETORNO_BIENVENIDA_MAIN;
+				}
+			}
+		}
+	   
+		protected void onPostExecute(String result) {
+
+	       pDialog.dismiss();//ocultamos progess dialog.
+	       Log.d("onPostExecute=",""+result);
+	       
+	       if (result.equals(AbilidadeApplication.RETORNO_BIENVENIDA_MAIN)){
+
+				// Lanzo la MainActivity
+	    	    Intent i=new Intent(BienvenidaActivity.this, MainActivity.class);
+				startActivity(i); 
+				finish();
+				
+	        }else{
+	        	
+	        	// Lanzo la AccederActivity
+	        	Intent i=new Intent(BienvenidaActivity.this, AccederActivity.class);
+				startActivity(i); 
+				finish();
+	        	
+	        }
+	     }
 	}
 }

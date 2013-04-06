@@ -7,6 +7,7 @@
     <string name="direccion">Dirección</string>
     <string name="acceder">Acceder</string>
     <string name="accediendo">Accediendo...</string>
+    <string name="cargandoEsperePorFavor">Cargando aplicación. Espere, por favor...</string>
     <string name="direccionCorreo">Dirección de correo electrónico</string>
     <string name="password">Contraseña</string>
     <string name="confirmarPassword">Confirmar contraseña</string>
@@ -17,6 +18,7 @@
     <string name="correoEOpcional">Correo electrónico (opcional)</string>
     <string name="imagenesPunto">Imágenes del punto</string>
     <string name="obteniendoDireccion">Obteniendo dirección. Espere...</string>
+    <string name="usuarioDesconectado">Usuario desconectado con éxito</string>
     <string name="altaPuntoVerFoto">Ver foto</string>
     <string name="altaPuntoTomarFoto">Tomar foto</string>
     <string name="altaPuntoElegirGaleria"> Elegir de la galería</string>
@@ -41,8 +43,11 @@
     <string name="detallePuntoDescripcion">Descripción: </string>
     <string name="sinDescripcion">(Sin Descripción)</string>
     <string name="volver">Volver</string>
+    <string name="ajustesUsuario">Ajustes de usuario</string>
+    <string name="cerrarSesion">Cerrar sesión de usuario</string>
     <string name="errorDetallePunto">Error al recuperar los datos del punto inaccesible</string>
     <string name="noImagenesAux">Sin más imáganes asociadas</string>
+    <string name="bienvenidaConexionInternet">Necesita conexión a internet para poder ejecutar la aplicación</string>
     <string name="ayudaAltaPuntoTitulo">- Título:</string>
     <string name="ayudaAltaPuntoDescrTitulo">Título del punto inaccesible. Se debe informar OBLIGATORIAMENTE</string>
     <string name="ayudaAltaPuntoDireccion">- Dirección:</string>
@@ -68,8 +73,10 @@
 	<string name="accederPasswordBlanco">Introduzca contraseña</string>
 	<string name="accederConfirmarPasswordBlanco">Introduzca confirmación de contraseña</string>
 	<string name="accederPasswordsNoCoinciden">Las contraseñas introducidas no coinciden</string>
+	<string name="accederConfirmarUsuarioIncorrecto">La dirección de e-mail especificada no tiene un formato correcto</string>
+	<string name="accederConfirmarLongPasswordMenor">La contraseña introducida es demasiado pequeña. Introduzca una con tamaño igual o superior a</string>
 	<string name="accesoIncorrecto">Acceso incorrecto al servidor. Por favor, inténtelo de nuevo más tarde</string>
-	<string name="accesoIncorrectoUsuario">E-mail no encontrado</string>
+	<string name="accesoIncorrectoUsuario">Dirección de e-mail no registrada en ABILIDADE</string>
 	<string name="accesoIncorrectoPassword">La contraseña no coincide para la dirección de e-mail indicada</string>
 	<string name="accesoIncorrectoUsuarioNoActivo">Usuario no activo. Por favor, active su cuenta de usuario</string>
 	<string name="accesoIncorrectoError">Error al validar usuario. Por favor, inténtelo de nuevo más tarde</string>
@@ -79,4 +86,5 @@
 	<string name="confirmarUsuario">Confirmar usuario</string>
 	<string name="confirmarUsuarioTextoPlanoI">En breves momentos recibirá un correo electrónico de confirmación de usuario en la dirección de correo que indicó.</string>
 	<string name="confirmarUsuarioTextoPlanoII">Pulse sobre el enlace que se adjunta en el correo para confirmar su registro de usuario en ABILIDADE.</string>
+	<string name="confirmarUsuarioTextoPlanoIII">Si no encuentra el correo en su carpeta de Recibidos, revise su carpeta de correo no deseado.</string>
 </resources>

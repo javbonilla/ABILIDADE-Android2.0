@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout	xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:background="@color/grisFondoPantalla"
+  android:paddingLeft="4dip"
+  android:paddingRight="4dip"
+  >
+  <ScrollView android:id="@+id/ScrollView001Ajustes"
+    android:orientation="vertical"
+  	android:layout_width="fill_parent"
+  	android:layout_height="wrap_content" 
+  >
+      <LinearLayout 
+          android:id="@+id/LinerLayout001Ajustes"
+          android:orientation="vertical"
+  	      android:layout_width="fill_parent"
+	   	  android:layout_height="wrap_content" 
+      >
+          <TextView	android:id="@+id/ajustesTextoAjustes"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/ajustesUsuario"  
+			style="@style/altaPuntoTextoPlano"
+			android:layout_marginTop="10dip"
+		  />
+		  <Button
+		      android:id="@+id/ajustesBotonCerrarUsuario"
+		      android:layout_width="fill_parent"
+		      android:layout_height="40dip"
+		      android:layout_marginBottom="5dip"
+		      android:layout_marginTop="15dip"
+		      android:text="@string/cerrarSesion"  
+		      android:gravity="center"
+		      android:background="@drawable/button_selector_red"
+		      style="@style/buttonTextStyle"
+	  	  />
+      </LinearLayout>
+  </ScrollView>
+</RelativeLayout>

@@ -55,6 +55,7 @@ public class MainActivity extends GDActivity {
 	private Button botonMapa;
 	private Button botonRutasAccesibles;
 	private Button botonDescargarPuntos;
+	private Button botonAjustes;
 	
 	// Definicion de los campos de un punto
 	private String titulo = "";
@@ -87,6 +88,7 @@ public class MainActivity extends GDActivity {
         botonMapa = (Button) findViewById(R.id.botonMapa);
         botonRutasAccesibles = (Button) findViewById(R.id.botonRutasAccesibles);
         botonDescargarPuntos = (Button) findViewById(R.id.botonDescargarPuntos);
+        botonAjustes = (Button) findViewById(R.id.botonAjustes);
         
         botonAltaPunto.setOnClickListener(new OnClickListener() {
 			@Override
@@ -113,6 +115,16 @@ public class MainActivity extends GDActivity {
 			public void onClick(View v) {
 				Intent intent = new Intent();
 				intent.setClass(MainActivity.this, RutasAccesiblesActivity.class);
+				
+				startActivity(intent);
+			}
+		});
+		
+		botonAjustes.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setClass(MainActivity.this, AjustesActivity.class);
 				
 				startActivity(intent);
 			}

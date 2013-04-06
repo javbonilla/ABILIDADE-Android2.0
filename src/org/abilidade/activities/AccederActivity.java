@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
@@ -55,6 +56,7 @@ public class AccederActivity extends Activity {
 	// Constantes necesarias para el funcionamiento del acceso
 	
 	private final String sURLConnect = "http://abilidade.eu/r/loginmovil/acces.php";
+	private final String sURLForgotPassword = "http://abilidade.eu/r/loginmovil/recordar.html";
 	
 	// ************************** DEFINICION DE METODOS DE LA CLASE  ************************** //
 
@@ -122,7 +124,10 @@ public class AccederActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(getApplicationContext(), "Has pulsado en olvidaste tu password", Toast.LENGTH_LONG).show();	
+				// Lo que se hace es llamar al navegador con la pagina para recordar la password
+				Intent i = new Intent(Intent.ACTION_VIEW);
+				i.setData(Uri.parse(sURLForgotPassword));
+				startActivity(i);
 			}
 		});
 	}

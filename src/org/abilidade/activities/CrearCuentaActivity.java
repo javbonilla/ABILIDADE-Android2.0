@@ -86,14 +86,19 @@ public class CrearCuentaActivity extends Activity {
 					
 					validarDatosEnBlanco();
 					
-					// 3. Se valida que las contraseñas introducidas coincidan
+					// 3. Se valida que el e-mail y la password sean validos
+					if (bValidacionOk) {
+						validarDatosCorrectos();
+					}
+					
+					// 4. Se valida que las contraseñas introducidas coincidan
 					
 					if (bValidacionOk) {
 						validarPassword();	
 					}
 					
 					
-					// 4. Si los datos validan ok, se envian a la BD
+					// 5. Si los datos validan ok, se envian a la BD
 					
 					if (bValidacionOk) {
 						
@@ -141,6 +146,25 @@ public class CrearCuentaActivity extends Activity {
 			}
 		}
 	}
+   
+   public void validarDatosCorrectos() {
+	   
+	   // Se valida que el usuario contenga una @ y un ., es decir, que tenga forma de direccion de e-mail
+	   if (sUsuario.contains("@") && sUsuario.contains(".")) {
+		   
+		   // Se valida ahora que la password tenga una longitud de al menos 4 caracteres
+		   if (sPassword.length() < AbilidadeApplication.LONGITUD_PASSWORD) {
+			   Log.e("Crear cuenta", "La password introducida es menor de"+AbilidadeApplication.LONGITUD_PASSWORD);
+			   errLogin(getString(R.string.accederConfirmarLongPasswordMenor)+" "+AbilidadeApplication.LONGITUD_PASSWORD); 
+			   bValidacionOk = false; 
+		   }
+		   
+	   } else {
+		   Log.e("Crear cuenta", "El usuario introducido no tiene formato de direccion de e-mail");
+		   errLogin(getString(R.string.accederConfirmarUsuarioIncorrecto)); 
+		   bValidacionOk = false; 
+	   }
+   }
    
     public void validarPassword() {
     	
