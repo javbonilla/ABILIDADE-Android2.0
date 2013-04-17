@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.abilidade.R;
 import org.abilidade.activities.AltaPuntoActivity;
-import org.abilidade.activities.MainActivity;
 import org.abilidade.activities.ZoomImagenActivity;
 import org.abilidade.base64.Base64Coder;
+import org.abilidade.mapa.MapaActivity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -75,6 +75,7 @@ public class AbilidadeApplication extends GDApplication {
 	public static final String SHARED_PREFERENCES = "AbilidadeShPf";
 	public static final String SHPF_PRIMERA_VEZ   = "AbilidadeShPfPrimeraVez";
 	public static final String SHPF_USUARIO       = "AbilidadeShPfUsuario";
+	public static final String SHPF_LOGIN         = "AbilidadeShPfLogin";
 	
 	// Retornos de la pantalla de bienvenida
 	public static final String RETORNO_BIENVENIDA_ACCEDER = "RetornoBienvenidaAcceder";
@@ -82,7 +83,7 @@ public class AbilidadeApplication extends GDApplication {
 	
 	@Override
 	public Class<?> getHomeActivityClass() {
-		return MainActivity.class;
+		return MapaActivity.class;
 	}
 	
 	/**

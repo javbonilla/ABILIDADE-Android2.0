@@ -3,8 +3,10 @@ package org.abilidade.mapa;
 import java.util.List;
 
 import org.abilidade.R;
+import org.abilidade.activities.AjustesActivity;
 import org.abilidade.activities.AltaPuntoActivity;
 import org.abilidade.activities.AyudaMapa;
+import org.abilidade.activities.RutasAccesiblesActivity;
 import org.abilidade.application.AbilidadeApplication;
 import org.abilidade.db.DatabaseCommons;
 import org.abilidade.db.PuntoProvider;
@@ -20,6 +22,9 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
@@ -55,7 +60,7 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
         
         // Elementos en la barra de accion --> Solamente un boton de ayuda
      	addActionBarItem(Type.Add, R.id.action_bar_add);
-     	addActionBarItem(Type.Help, R.id.action_bar_help);
+     	addActionBarItem(Type.Eye, R.id.action_bar_eye);
         
         // Localizacion de los elementos en pantalla
         mapView = (MapView) findViewById(R.id.activityMapaMapView);
@@ -98,10 +103,9 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
         	intent.putExtra(AbilidadeApplication.altaPuntoParametroLongitud, longitud);
         	
         	startActivity(intent);
-		} else if (item.getItemId() == R.id.action_bar_help) {
-			Intent intent = new Intent();
-			intent.setClass(MapaActivity.this, AyudaMapa.class);
-			startActivity(intent);
+		} else if (item.getItemId() == R.id.action_bar_eye) {
+			// Se muestran los puntos
+			Toast.makeText(getApplicationContext(), "Tengo que mostrar los puntos", Toast.LENGTH_LONG).show();
 		} 
         return super.onHandleActionBarItemClick(item, pos);
     }
@@ -114,6 +118,54 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
     	comprobarSensores();
     	lm.requestLocationUpdates(provider, 0, 0, MapaActivity.this);
     }
+    
+    /* ***************** AQUI COMIENZA LA GESTION DEL MENU PRINCIPAL DE LA APLICACION ***************** */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	MenuInflater inflater = getMenuInflater();
+    	inflater.inflate(R.menu.menu_mapa, menu);
+    	
+    	return true;
+    }
+    
+    @Override 
+    public boolean onOptionsItemSelected(MenuItem item) {
+    	
+    	Intent intent = new Intent();
+    	
+    	switch (item.getItemId()) {
+    		case R.id.menuMapaAjustes:
+    			// Se arranca la Activity de Ajustes
+    			intent.setClass(MapaActivity.this, AjustesActivity.class);
+				startActivity(intent);
+				
+    			return true;
+    		case R.id.menuMapaRegistrarPunto:
+    			// Se muestra la pantalla de alta de punto
+    			intent.setClass(MapaActivity.this, AltaPuntoActivity.class);
+				startActivity(intent);
+    			
+    			return true;
+    		case R.id.menuMapaRutasAccesibles:
+    			// Se muestra la lista de rutas accesibles
+				intent.setClass(MapaActivity.this, RutasAccesiblesActivity.class);
+				startActivity(intent);
+				
+    			return true;
+    		case R.id.menuMapaAyuda:
+    			// Se muestra la ayuda de la aplicacion
+    			//TODO Aqui habra que incluir la ayuda COMPLETA de la aplicacion
+    			intent.setClass(MapaActivity.this, AyudaMapa.class);
+    			startActivity(intent);
+				
+    			return true;
+    		default:
+    			return false;
+    	}
+    }
+    
+    /* ***************** ************************************************************ ***************** */
+    
     
     private void comprobarSensores() {
     	lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);

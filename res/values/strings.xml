@@ -16,6 +16,10 @@
     <string name="crearCuenta">Crear cuenta</string>
     <string name="descripcionOpcional">Descripción (opcional)</string>
     <string name="correoEOpcional">Correo electrónico (opcional)</string>
+    <string name="registrarPunto">Registrar punto</string>
+    <string name="rutasAccesibles">Rutas 100% accesibles</string>
+    <string name="ajustes">Ajustes</string>
+    <string name="ayuda">Ayuda</string>
     <string name="imagenesPunto">Imágenes del punto</string>
     <string name="obteniendoDireccion">Obteniendo dirección. Espere...</string>
     <string name="usuarioDesconectado">Usuario desconectado con éxito</string>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/menuMapaRegistrarPunto" android:title="@string/registrarPunto"
+          android:icon="@android:drawable/ic_menu_add"></item>
+    <item android:id="@+id/menuMapaRutasAccesibles" android:title="@string/rutasAccesibles"
+          android:icon="@android:drawable/ic_menu_directions"></item>
+    <item android:id="@+id/menuMapaAjustes" android:title="@string/ajustes"
+          android:icon="@android:drawable/ic_menu_preferences"></item>
+    <item android:id="@+id/menuMapaAyuda" android:title="@string/ayuda"
+          android:icon="@android:drawable/ic_menu_help"></item>
+</menu>

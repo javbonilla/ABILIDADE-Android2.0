@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.abilidade.R;
 import org.abilidade.application.AbilidadeApplication;
+import org.abilidade.mapa.MapaActivity;
 import org.abilidade.network.Httppostaux;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -19,6 +20,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
@@ -250,12 +253,28 @@ public class AccederActivity extends Activity {
 	   
 		protected void onPostExecute(String result) {
 
-	       pDialog.dismiss();//ocultamos progess dialog.
+		   Editor editor;
+	       
+		   pDialog.dismiss();//ocultamos progess dialog.
 	       Log.e("onPostExecute=",""+result);
 	       
 	       if (result.equals(AbilidadeApplication.RETORNO_OK)){
 
-				Intent i=new Intent(AccederActivity.this, MainActivity.class);
+				// 1. Se guardan las SharedPreferences
+				SharedPreferences pref = getApplicationContext().getSharedPreferences(AbilidadeApplication.SHARED_PREFERENCES, 0); // 0 - for private mode
+				editor = pref.edit();
+				
+				editor.putString(AbilidadeApplication.SHPF_USUARIO, sUsuario);
+				editor.putBoolean(AbilidadeApplication.SHPF_LOGIN, true);
+				
+				editor.commit();
+				
+				Log.d("AccederActivity","Coloco "+sUsuario+" como usuario logueado en el sistema");
+				
+				// 2. Y se arranca la MainActivity
+				Intent i=new Intent(AccederActivity.this, MapaActivity.class);
+				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Para cerrar todas las demas Activities
+				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Para comenzar la nueva Activity
 				startActivity(i); 
 				finish();
 				
@@ -274,8 +293,6 @@ public class AccederActivity extends Activity {
 	        			}
 	        		}
 	        	}
-	        	
-	        	
 	        }
 	     }
 	}

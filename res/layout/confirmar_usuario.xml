@@ -3,7 +3,7 @@
   android:orientation="vertical"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent"
-  android:background="@color/azulFondoPantalla"
+  android:background="@color/grisFondoPantalla"
   android:paddingLeft="4dip"
   android:paddingRight="4dip"
   >
@@ -26,7 +26,7 @@
 			android:layout_height="wrap_content"
 			android:text="@string/confirmarUsuarioTextoPlanoI"
 			android:layout_gravity="center_horizontal"
-			style="@style/altaPuntoTextoPlanoBlanco"
+			style="@style/altaPuntoTextoPlano"
 			android:layout_marginTop="15dip"
       />
       <TextView android:id="@+id/confirmarUsuarioTextoPlanoII"
@@ -34,7 +34,7 @@
 			android:layout_height="wrap_content"
 			android:text="@string/confirmarUsuarioTextoPlanoII"
 			android:layout_gravity="center_horizontal"
-			style="@style/altaPuntoTextoPlanoBlanco"
+			style="@style/altaPuntoTextoPlano"
 			android:layout_marginTop="10dip"
       />  
       <TextView android:id="@+id/confirmarUsuarioTextoPlanoIII"
@@ -42,7 +42,7 @@
 			android:layout_height="wrap_content"
 			android:text="@string/confirmarUsuarioTextoPlanoIII"
 			android:layout_gravity="center_horizontal"
-			style="@style/altaPuntoTextoPlanoBlanco"
+			style="@style/altaPuntoTextoPlano"
 			android:layout_marginTop="10dip"
       />
       

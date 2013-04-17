@@ -3,6 +3,7 @@ package org.abilidade.activities;
 import org.abilidade.R;
 import org.abilidade.activities.AccederActivity.asynclogin;
 import org.abilidade.application.AbilidadeApplication;
+import org.abilidade.mapa.MapaActivity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -95,7 +96,7 @@ public class BienvenidaActivity extends Activity {
 			
 			boolean bPrimeraVez;
 			Editor editor;
-			String sUsuario;
+			boolean bLogin;
 			
 			// 1. Lo primero que se va a hacer es comprobar si es la primera vez que se arranca la aplicacion
 			//    Para ello, se recuperan las SharedPreferences y se comprueba el parametro "primeraVez"
@@ -112,8 +113,9 @@ public class BienvenidaActivity extends Activity {
 				
 				Log.d("bienvenida","primera vez que se arranca la aplicacion");
 				
-				// Pongo el ShPf "usuario" a null y accedo a la pantalla AccederActivity
+				// Pongo el ShPf "usuario" a espacios y el "login" a false y accedo a la pantalla AccederActivity
 				editor.putString(AbilidadeApplication.SHPF_USUARIO, "");
+				editor.putBoolean(AbilidadeApplication.SHPF_LOGIN, false);
 				
 				// Indico que ya se ha ejecutado la aplicacion por primera vez
 				editor.putBoolean(AbilidadeApplication.SHPF_PRIMERA_VEZ, false);
@@ -125,22 +127,19 @@ public class BienvenidaActivity extends Activity {
 				
 			} else {
 				
-				// Recupero el ShPf "usuario" y lo compruebo:
-				// - Si esta informado, accedo a la pantalla MainActivity sin pasar por AccederActivity
+				// Recupero el ShPf "login" y lo compruebo:
+				// - Si esta a true, accedo a la pantalla MainActivity sin pasar por AccederActivity
 				// - Si no lo esta, accedo a la pantalla AccederActivity
-				sUsuario = pref.getString(AbilidadeApplication.SHPF_USUARIO, null);
+				bLogin = pref.getBoolean(AbilidadeApplication.SHPF_LOGIN, false);
 				
-				Log.d("bienvenida", "Valor de sUsuario: "+sUsuario);
+				Log.d("bienvenida", "Valor de bLogin: "+bLogin);
 				
-				if (sUsuario.equals("")) {
-					Log.d("bienvenida","No me llega usuario, voy a AccederActivity");
-					
-					return AbilidadeApplication.RETORNO_BIENVENIDA_ACCEDER;
-				} else {
-					
-					Log.d("bienvenida","Si me llega usuario, voy a MainActivity");
-					
+				if (bLogin) {
+					Log.d("bienvenida","Si me llega login, voy a MainActivity");
 					return AbilidadeApplication.RETORNO_BIENVENIDA_MAIN;
+				} else {
+					Log.d("bienvenida","No me llega login, voy a AccederActivity");
+					return AbilidadeApplication.RETORNO_BIENVENIDA_ACCEDER;
 				}
 			}
 		}
@@ -153,7 +152,9 @@ public class BienvenidaActivity extends Activity {
 	       if (result.equals(AbilidadeApplication.RETORNO_BIENVENIDA_MAIN)){
 
 				// Lanzo la MainActivity
-	    	    Intent i=new Intent(BienvenidaActivity.this, MainActivity.class);
+	    	    Intent i=new Intent(BienvenidaActivity.this, MapaActivity.class);
+				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Para cerrar todas las demas Activities
+				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Para comenzar la nueva Activity
 				startActivity(i); 
 				finish();
 				
@@ -161,6 +162,8 @@ public class BienvenidaActivity extends Activity {
 	        	
 	        	// Lanzo la AccederActivity
 	        	Intent i=new Intent(BienvenidaActivity.this, AccederActivity.class);
+				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Para cerrar todas las demas Activities
+				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Para comenzar la nueva Activity
 				startActivity(i); 
 				finish();
 	        	
