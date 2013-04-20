@@ -1,5 +1,15 @@
 package org.abilidade.mapa;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import org.abilidade.R;
@@ -11,11 +21,22 @@ import org.abilidade.application.AbilidadeApplication;
 import org.abilidade.db.DatabaseCommons;
 import org.abilidade.db.PuntoProvider;
 import org.abilidade.map_components.OverlayItemPunto;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -42,7 +63,8 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
 	private MapView mapView = null;
 	private MapController mapController = null;
 	private List<Overlay> mapOverlays;
-	private MyItemizedOverlay itemizedOverlayPuntos;
+	private MyItemizedOverlay itemizedOverlayPuntosAccesibles;
+	private MyItemizedOverlay itemizedOverlayPuntosInaccesibles;
 	private MyItemizedOverlayUsuario itemizedOverlayUsuario;
 	
 	// Atributos relacionados con la localizacion del usuario
@@ -51,6 +73,25 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
 	private String provider;
 	private double latitud;
 	private double longitud;
+	
+	// Atributos relacionados con la descarga de puntos desde el servidor
+	private String jsonPuntos;
+	private JSONObject jObject;
+	private JSONArray menuObject;
+	
+	// Definicion de los campos de un punto
+	private String sPuntoTitulo = "";
+	private String sPuntoDireccion = "";
+	private String sPuntoLocalidad = "";
+	private String sPuntoProvincia = "";
+	private String sPuntoDescripcion = "";
+	private String sPuntoCorreoE = "";
+	private double dPuntoLatitud = 0;
+	private double dPuntoLongitud = 0;
+	private int iPuntoEstado = 0;
+	
+	private String sPuntoImagenPrincipalPath = "";
+	private Bitmap bmImagenPrincipal = null;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -77,14 +118,14 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
         // Esto lo mejor seria preguntarlo como parametro, o dejarlo en el menu de opciones
         mapView.setSatellite(false);
         
-        // Iniciamos el objeto itemizedOverlayPuntos y el marker que se usara para seÃ±alar los puntos
-        itemizedOverlayPuntos = new MyItemizedOverlay(getResources().getDrawable(R.drawable.marker), mapView);
+        // Iniciamos el objeto itemizedOverlayPuntosAccesibles y el marker que se usara para señalar los puntos
+        itemizedOverlayPuntosAccesibles = new MyItemizedOverlay(getResources().getDrawable(R.drawable.marker_green), mapView);
+        
+        // Iniciamos el objeto itemizedOverlayPuntosInaccesibles y el marker que se usara para señalar los puntos
+        itemizedOverlayPuntosInaccesibles = new MyItemizedOverlay(getResources().getDrawable(R.drawable.marker_red), mapView);
         
         // Iniciamos el objeto itemizedOverlayUsuario y el marker que se usara para su ubicacion
         itemizedOverlayUsuario = new MyItemizedOverlayUsuario(MapaActivity.this, getResources().getDrawable(R.drawable.usermarker));
-		
-        // Cargamos todos los puntos inaccesibles desde la Base de Datos al mapa
-        cargarPuntos();
     }
     
     /**
@@ -104,8 +145,9 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
         	
         	startActivity(intent);
 		} else if (item.getItemId() == R.id.action_bar_eye) {
-			// Se muestran los puntos
-			Toast.makeText(getApplicationContext(), "Tengo que mostrar los puntos", Toast.LENGTH_LONG).show();
+			// Se descargan y muestran los puntos
+			Log.d("MapaActivity","Comienza la descarga de puntos");
+			descargarPuntos();
 		} 
         return super.onHandleActionBarItemClick(item, pos);
     }
@@ -189,49 +231,131 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
 	   	}
     }
     
-    private void cargarPuntos() {
+    private void descargarPuntos() {
+    	
     	GeoPoint point = null;
-    	Bitmap imagen = null;
-    	int latitud;
-    	int longitud; 
+    	int iLatitud;
+    	int iLongitud; 
     	OverlayItemPunto overlayItem;
     	
-    	// Obtenemos los puntos desde la BD
-    	final String[] columnas = new String[] { DatabaseCommons.Punto._ID, DatabaseCommons.Punto.TITULO, DatabaseCommons.Punto.DIRECCION,
-    			DatabaseCommons.Punto.LATITUD, DatabaseCommons.Punto.LONGITUD, DatabaseCommons.Punto.IMAGEN_PRINCIPAL };
-    	Uri uri = PuntoProvider.CONTENT_URI;
-    	String selection = DatabaseCommons.Punto.ESTADO + " > ?";
-    	String[] projection = new String[] { ""+AbilidadeApplication.ESTADO_CERRADO_RESUELTO };
-    	Cursor cursor = managedQuery(uri, columnas, selection, projection, DatabaseCommons.Punto.DEFAULT_SORT_ORDER);
+    	// 1. Se recibe el JSON para trocearlo y obtener los puntos
+    	jsonPuntos = recibirJSON();
+    	Log.d("MapaActivity",jsonPuntos.toString());
     	
-    	// Comprobamos si ha habido cambios para recargar el cursor
-    	cursor.setNotificationUri(getContentResolver(), uri);
+    	// 2. Se trocea el JSON recibido
+    	try {
+			jObject = new JSONObject(jsonPuntos);
+			menuObject = jObject.getJSONArray(AbilidadeApplication.GESTION_PUNTOS_DATA);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
     	
-    	// La actividad se encargara de manejar el cursor segun su ciclo de vida
-    	startManagingCursor(cursor);
-    	
-    	// Cada fila recuperada del cursor se vuelca al mapa. Si no hay ningun punto se informara al usuario, al igual que si ha habido error
-    	if (cursor != null) {
-    		if (cursor.moveToFirst()) {
-    			do {
-    				// Recuperamos los campos y los almacenamos en un OverlayItemPunto, objeto que se cargara al mapa
-    				latitud = (int)(cursor.getDouble(3) * 1E6);
-    				Log.w("MapaActivity",""+latitud);
-        			longitud = (int)(cursor.getDouble(4) * 1E6);
-        			Log.w("MapaActivity",""+longitud);
-        			point = new GeoPoint(latitud, longitud);
-        			imagen = AbilidadeApplication.descodificarImagen(cursor.getString(5));
-        			overlayItem = new OverlayItemPunto(point, cursor.getString(1), "", cursor.getLong(0), cursor.getString(2), imagen);
-        			
-        			itemizedOverlayPuntos.addOverlay(overlayItem);
-    			} while(cursor.moveToNext());
+    	// 3. Se va extrayendo la informacion del JSON
+    	int totalElementos = menuObject.length();
+		//for (int i=0 ; i<totalElementos; i++) { DESCOMENTAR ESTO!!! LO HAGO POR AHORA SOLO PARA PRUEBAS
+    	for (int i=0 ; i<1; i++) {
+			try {
+				sPuntoTitulo = menuObject.getJSONArray(i).getString(0);
+				sPuntoDireccion = menuObject.getJSONArray(i).getString(1);
+				sPuntoDescripcion = menuObject.getJSONArray(i).getString(2);
+				sPuntoCorreoE = menuObject.getJSONArray(i).getString(3);
+				dPuntoLatitud = menuObject.getJSONArray(i).getDouble(4);
+				dPuntoLongitud = menuObject.getJSONArray(i).getDouble(5);
+				iPuntoEstado = menuObject.getJSONArray(i).getInt(6);
+				sPuntoImagenPrincipalPath = menuObject.getJSONArray(i).getString(7);
+				
+				Log.d("MapaActivity","Titulo:      "+sPuntoTitulo);
+				Log.d("MapaActivity","Direccion:   "+sPuntoDireccion);
+				Log.d("MapaActivity","Descripcion: "+sPuntoDescripcion);
+				Log.d("MapaActivity","Correo e:    "+sPuntoCorreoE);
+				Log.d("MapaActivity","Latitud:     "+dPuntoLatitud);
+				Log.d("MapaActivity","Longitud:    "+dPuntoLongitud);
+				Log.d("MapaActivity","Estado:      "+iPuntoEstado);
+				Log.d("MapaActivity","Path imagen: "+sPuntoImagenPrincipalPath);
+				
+				// 4. Se recibe la imagen principal del punto desde el servidor
+				recibirImagenPrincipalPunto();
+				
+				// 5. El punto descargado se añade a la lista de puntos que se muestran en el mapa
+				iLatitud = (int)(dPuntoLatitud * 1E6);
+				iLongitud = (int)(dPuntoLongitud * 1E6);
     			
-    			// Por ultimo, aÃ±adimos el itemizedOverlayPuntos al mapOverlay
-    	    	mapOverlays.add(itemizedOverlayPuntos);
-    		} else {
-    			Toast.makeText(MapaActivity.this, getString(R.string.mapaActivityCursorVacio), Toast.LENGTH_LONG).show();
-    		}
-    	} 
+    			Log.d("MapaActivity","Latitud: "+iLatitud+" Longitud: "+iLongitud);
+    			
+    			point = new GeoPoint(iLatitud, iLongitud);
+				overlayItem = new OverlayItemPunto(point, sPuntoTitulo, "", sPuntoDireccion, sPuntoDescripcion, sPuntoImagenPrincipalPath, "", "", bmImagenPrincipal);
+				
+				// Si el estado del punto es 0, el punto es inaccesible. Si es 1, el punto es accesible
+				if (iPuntoEstado == 0) {
+					itemizedOverlayPuntosInaccesibles.addOverlay(overlayItem);
+					mapOverlays.add(itemizedOverlayPuntosInaccesibles);
+				} else {
+					itemizedOverlayPuntosAccesibles.addOverlay(overlayItem);
+					mapOverlays.add(itemizedOverlayPuntosAccesibles);
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+    }
+    
+    private void recibirImagenPrincipalPunto() {
+    	File img = new File("/sdcard/app/tmp/abilidade/" + sPuntoImagenPrincipalPath);
+
+        // Create directories
+        new File("/sdcard/app/tmp/abilidade").mkdirs();
+
+        // only download new images
+        if (!img.exists()) {
+	    	try {
+	    		String ruta = AbilidadeApplication.RUTA_IMAGEN+sPuntoImagenPrincipalPath;
+	    		URL imageUrl = new URL(ruta);
+	    		InputStream in = imageUrl.openStream();
+	    		OutputStream out = new BufferedOutputStream(new FileOutputStream(img));
+	    			
+	    		for (int b; (b = in.read()) != -1;) {
+	   				out.write(b);
+	   			}
+	   			out.close();
+	   			in.close();
+	   		} catch (MalformedURLException e) {
+	   			img = null;
+	   		} catch (IOException e) {
+	   			img = null;
+	   		}
+        }
+        
+        // Se obtiene la imagen principal y se escala a un tamaño adecuado
+        bmImagenPrincipal = BitmapFactory.decodeFile(img.getAbsolutePath());
+        bmImagenPrincipal = AbilidadeApplication.escalarImagen(bmImagenPrincipal);
+    }
+    
+    private String recibirJSON() {
+    	StringBuilder builder = new StringBuilder();
+		HttpClient client = new DefaultHttpClient();
+		HttpGet httpGet = new HttpGet("http://abilidade.eu/r/puntos.php");
+		
+		try {
+			HttpResponse response = client.execute(httpGet);
+			StatusLine statusLine = response.getStatusLine();
+			int statusCode = statusLine.getStatusCode();
+			if (statusCode == 200) {
+				HttpEntity entity = response.getEntity();
+				InputStream content = entity.getContent();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+				String line;
+				while ((line = reader.readLine()) != null) {
+					builder.append(line);
+				}
+			} else {
+				Log.e("MapaActivity", "Fallo al descargar el JSON de puntos");
+			}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return builder.toString();
     }
     
 	@Override

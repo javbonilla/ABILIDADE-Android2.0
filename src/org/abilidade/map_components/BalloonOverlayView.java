@@ -99,8 +99,8 @@ public class BalloonOverlayView<Item extends OverlayItemPunto> extends FrameLayo
 	public void setData(Item item) {
 		
 		layout.setVisibility(VISIBLE);
-		textViewTituloPunto.setText(item.getTitle());	
-		textViewDireccionPunto.setText(item.getDireccion());
-		imageViewImagenPunto.setImageBitmap(item.getImagen());
+		textViewTituloPunto.setText(item.getsTitulo());	
+		textViewDireccionPunto.setText(item.getsDireccion());
+		imageViewImagenPunto.setImageBitmap(item.getBmImagen());
 	}
 }

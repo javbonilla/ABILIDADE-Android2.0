@@ -41,8 +41,6 @@ public class AbilidadeApplication extends GDApplication {
 	
 	public static final String RutaAccesibleParametro = "rutaAccesible";
 	
-	public static final String puntoId = "id"; 
-	
 	// Estados por los que puede pasar un punto
 	public static final int ESTADO_CERRADO_CANCELADO = 0;
 	public static final int ESTADO_CERRADO_RESUELTO = 1;
@@ -80,6 +78,20 @@ public class AbilidadeApplication extends GDApplication {
 	// Retornos de la pantalla de bienvenida
 	public static final String RETORNO_BIENVENIDA_ACCEDER = "RetornoBienvenidaAcceder";
 	public static final String RETORNO_BIENVENIDA_MAIN = "RetornoBienvenidaMain";
+	
+	// Gestion de puntos con el servidor
+	public static final String GESTION_PUNTOS_DATA = "data";
+	
+	// Informacion a pasar sobre un punto
+	public static final String PUNTO_TITULO      = "titulo";
+	public static final String PUNTO_DIRECCION   = "direccion";
+	public static final String PUNTO_DESCRIPCION = "descripcion";
+	public static final String PUNTO_IMAGEN_PRINCIPAL = "ImagenPrincipal";
+	public static final String PUNTO_IMAGEN_AUX1 = "ImagenAux1";
+	public static final String PUNTO_IMAGEN_AUX2 = "ImagenAux2";
+	
+	// Ruta de una imagen
+	public static final String RUTA_IMAGEN = "http://abilidade.eu/r/imgpoint/";
 	
 	@Override
 	public Class<?> getHomeActivityClass() {

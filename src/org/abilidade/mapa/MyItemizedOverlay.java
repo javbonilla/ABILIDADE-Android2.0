@@ -57,7 +57,12 @@ public class MyItemizedOverlay extends BalloonItemizedOverlay<OverlayItemPunto> 
 	protected boolean onBalloonTap(int index, OverlayItemPunto item) {
 		Intent intent = new Intent();
 		intent.setClass(c, DetallePuntoActivity.class);
-		intent.putExtra(AbilidadeApplication.puntoId, item.getId());
+		intent.putExtra(AbilidadeApplication.PUNTO_TITULO, item.getsTitulo());
+		intent.putExtra(AbilidadeApplication.PUNTO_DESCRIPCION, item.getsDescripcion());
+		intent.putExtra(AbilidadeApplication.PUNTO_DIRECCION, item.getsDireccion());
+		intent.putExtra(AbilidadeApplication.PUNTO_IMAGEN_PRINCIPAL, item.getsImagenPrincipal());
+		intent.putExtra(AbilidadeApplication.PUNTO_IMAGEN_AUX1, item.getsImagenAux1());
+		intent.putExtra(AbilidadeApplication.PUNTO_IMAGEN_AUX2, item.getsImagenAux2());
 		c.startActivity(intent);
 		return true;
 	}

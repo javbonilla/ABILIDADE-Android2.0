@@ -20,6 +20,12 @@
 	
 	<style name="detallePuntoTextoDescripcion" parent="@android:style/TextAppearance.Medium">
 	    <item name="android:textSize">14sp</item>
+	    <item name="android:textStyle">italic</item>
+	    <item name="android:textColor">@color/negro</item>
+	</style>
+	
+	<style name="detallePuntoTextoEnlaceImagen" parent="@android:style/TextAppearance.Medium">
+	    <item name="android:textSize">14sp</item>
 	    <item name="android:textColor">@color/negro</item>
 	</style>
 	

@@ -6,6 +6,7 @@
     <string name="tituloRequerido">Título (Requerido)</string>
     <string name="direccion">Dirección</string>
     <string name="acceder">Acceder</string>
+    <string name="descripcion">Descripción</string>
     <string name="accediendo">Accediendo...</string>
     <string name="cargandoEsperePorFavor">Cargando aplicación. Espere, por favor...</string>
     <string name="direccionCorreo">Dirección de correo electrónico</string>
@@ -18,6 +19,9 @@
     <string name="correoEOpcional">Correo electrónico (opcional)</string>
     <string name="registrarPunto">Registrar punto</string>
     <string name="rutasAccesibles">Rutas 100% accesibles</string>
+    <string name="verImagenPrincipal">Ver imagen principal</string>
+    <string name="verImagenAux1">Ver imagen auxiliar 1</string>
+    <string name="verImagenAux2">Ver imagen auxiliar 2</string>
     <string name="ajustes">Ajustes</string>
     <string name="ayuda">Ayuda</string>
     <string name="imagenesPunto">Imágenes del punto</string>

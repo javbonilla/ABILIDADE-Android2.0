@@ -7,39 +7,81 @@ import com.google.android.maps.OverlayItem;
 public class OverlayItemPunto extends OverlayItem {
 
 	// Definicion de atributos de la clase
-	private long id = 0;
-	private String direccion = null;
-	private Bitmap imagen = null;
+	private String sTitulo = null;
+	private String sDireccion = null;
+	private String sDescripcion = null;
+	
+	private String sImagenPrincipal = null;
+	private String sImagenAux1 = null;
+	private String sImagenAux2 = null;
+	
+	private Bitmap  bmImagen = null;
 	
 	// Definicion de metodos
-	public OverlayItemPunto(GeoPoint point, String title, String snippet, long id, String direccion, Bitmap imagen) {
+	public OverlayItemPunto(GeoPoint point, String title, String snippet, String direccion, String descripcion, String imagenPrincipal, String imagenAux1, String imagenAux2, Bitmap imagen) {
 		super(point, title, snippet);
-		this.direccion = direccion;
-		this.imagen = imagen;
-		this.id = id;
+		this.sTitulo      = title;
+		this.sDireccion   = direccion;
+		this.sDescripcion = descripcion;
+		this.sImagenPrincipal = imagenPrincipal;
+		this.sImagenAux1 = imagenAux1;
+		this.sImagenAux2 = imagenAux2;
+		this.bmImagen     = imagen;
 	}
 
-	public long getId() {
-		return id;
+	public String getsTitulo() {
+		return sTitulo;
 	}
 
-	public void setId(long id) {
-		this.id = id;
-	}
-	
-	public String getDireccion() {
-		return direccion;
+	public void setsTitulo(String sTitulo) {
+		this.sTitulo = sTitulo;
 	}
 
-	public void setDireccion(String direccion) {
-		this.direccion = direccion;
+	public String getsDireccion() {
+		return sDireccion;
 	}
 
-	public Bitmap getImagen() {
-		return imagen;
+	public void setsDireccion(String sDireccion) {
+		this.sDireccion = sDireccion;
 	}
 
-	public void setImagen(Bitmap imagen) {
-		this.imagen = imagen;
+	public String getsDescripcion() {
+		return sDescripcion;
+	}
+
+	public void setsDescripcion(String sDescripcion) {
+		this.sDescripcion = sDescripcion;
+	}
+
+	public String getsImagenPrincipal() {
+		return sImagenPrincipal;
+	}
+
+	public void setsImagenPrincipal(String sImagenPrincipal) {
+		this.sImagenPrincipal = sImagenPrincipal;
+	}
+
+	public String getsImagenAux1() {
+		return sImagenAux1;
+	}
+
+	public void setsImagenAux1(String sImagenAux1) {
+		this.sImagenAux1 = sImagenAux1;
+	}
+
+	public String getsImagenAux2() {
+		return sImagenAux2;
+	}
+
+	public void setsImagenAux2(String sImagenAux2) {
+		this.sImagenAux2 = sImagenAux2;
+	}
+
+	public Bitmap getBmImagen() {
+		return bmImagen;
+	}
+
+	public void setBmImagen(Bitmap bmImagen) {
+		this.bmImagen = bmImagen;
 	}
 }
