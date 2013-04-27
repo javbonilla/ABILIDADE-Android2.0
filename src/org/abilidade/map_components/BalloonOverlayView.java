@@ -101,6 +101,6 @@ public class BalloonOverlayView<Item extends OverlayItemPunto> extends FrameLayo
 		layout.setVisibility(VISIBLE);
 		textViewTituloPunto.setText(item.getsTitulo());	
 		textViewDireccionPunto.setText(item.getsDireccion());
-		imageViewImagenPunto.setImageBitmap(item.getBmImagen());
+		imageViewImagenPunto.setImageBitmap(BitmapFactory.decodeFile(item.getsImagenPrincipalThumb()));
 	}
 }

@@ -217,6 +217,14 @@ public class AccederActivity extends Activity {
 	    Toast.makeText(getApplicationContext(),mensajeError, Toast.LENGTH_LONG).show();
 	}
 	
+	@Override
+	protected void onPause() {
+		// Se fuerza a la aplicacion a salir 
+		finish();
+		
+		super.onPause();
+	}
+	
 	/*		CLASE ASYNCTASK
 	 * Se usa esta clase para poder mostrar el dialogo de progreso mientras se envian y obtienen los datos.     
 	 */

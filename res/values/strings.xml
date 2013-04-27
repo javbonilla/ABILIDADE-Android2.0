@@ -9,6 +9,7 @@
     <string name="descripcion">Descripción</string>
     <string name="accediendo">Accediendo...</string>
     <string name="cargandoEsperePorFavor">Cargando aplicación. Espere, por favor...</string>
+    <string name="detallePuntoImagenPrincipal">Imagen principal del punto</string>
     <string name="direccionCorreo">Dirección de correo electrónico</string>
     <string name="password">Contraseña</string>
     <string name="confirmarPassword">Confirmar contraseña</string>
@@ -24,6 +25,7 @@
     <string name="verImagenAux2">Ver imagen auxiliar 2</string>
     <string name="ajustes">Ajustes</string>
     <string name="ayuda">Ayuda</string>
+    <string name="agregarPunto">Agregar punto</string>
     <string name="imagenesPunto">Imágenes del punto</string>
     <string name="obteniendoDireccion">Obteniendo dirección. Espere...</string>
     <string name="usuarioDesconectado">Usuario desconectado con éxito</string>
@@ -49,6 +51,8 @@
     <string name="mapaActivityErrorCursor">Error al consultar la Base de Datos</string>
     <string name="mapaActivityCursorVacio">Base de datos vacía: no hay puntos que mostrar</string>
     <string name="detallePuntoDescripcion">Descripción: </string>
+    <string name="falloUbicarUsuario">Fallo al ubicar al usuario</string>
+    <string name="ubicacionNoEncontrada">Ubicación no encontrada</string>
     <string name="sinDescripcion">(Sin Descripción)</string>
     <string name="volver">Volver</string>
     <string name="ajustesUsuario">Ajustes de usuario</string>

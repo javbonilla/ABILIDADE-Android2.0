@@ -15,10 +15,12 @@
 
 package org.abilidade.mapa;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import org.abilidade.activities.DetallePuntoActivity;
@@ -63,6 +65,9 @@ public class MyItemizedOverlay extends BalloonItemizedOverlay<OverlayItemPunto> 
 		intent.putExtra(AbilidadeApplication.PUNTO_IMAGEN_PRINCIPAL, item.getsImagenPrincipal());
 		intent.putExtra(AbilidadeApplication.PUNTO_IMAGEN_AUX1, item.getsImagenAux1());
 		intent.putExtra(AbilidadeApplication.PUNTO_IMAGEN_AUX2, item.getsImagenAux2());
+		intent.putExtra(AbilidadeApplication.PUNTO_IMAGEN_PRINCIPAL_THUMB,item.getsImagenPrincipalThumb());
+		
+		// Y se arranca la pantalla de Detalle del punto
 		c.startActivity(intent);
 		return true;
 	}

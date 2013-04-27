@@ -8,8 +8,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.List;
 
 import org.abilidade.R;
@@ -18,8 +21,6 @@ import org.abilidade.activities.AltaPuntoActivity;
 import org.abilidade.activities.AyudaMapa;
 import org.abilidade.activities.RutasAccesiblesActivity;
 import org.abilidade.application.AbilidadeApplication;
-import org.abilidade.db.DatabaseCommons;
-import org.abilidade.db.PuntoProvider;
 import org.abilidade.map_components.OverlayItemPunto;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -43,6 +44,7 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Xml.Encoding;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -91,7 +93,12 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
 	private int iPuntoEstado = 0;
 	
 	private String sPuntoImagenPrincipalPath = "";
-	private Bitmap bmImagenPrincipal = null;
+	private String sPuntoImagenPrincipalThumbPath = "";
+	private String sPuntoImagenAux1Path = "";
+	private String sPuntoImagenAux2Path = "";
+	private String sThumbPathAndroid = "";
+	
+	private Bitmap bmImagenPrincipalThumb = null;
 	
 	/** Called when the activity is first created. */
     @Override
@@ -181,6 +188,9 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
     			intent.setClass(MapaActivity.this, AjustesActivity.class);
 				startActivity(intent);
 				
+				// Se finaliza la Activity del mapa, para que no se vuelva a ella
+				finish();
+				
     			return true;
     		case R.id.menuMapaRegistrarPunto:
     			// Se muestra la pantalla de alta de punto
@@ -237,6 +247,7 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
     	int iLatitud;
     	int iLongitud; 
     	OverlayItemPunto overlayItem;
+    	int iLongitudCadena;
     	
     	// 1. Se recibe el JSON para trocearlo y obtener los puntos
     	jsonPuntos = recibirJSON();
@@ -252,38 +263,56 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
     	
     	// 3. Se va extrayendo la informacion del JSON
     	int totalElementos = menuObject.length();
-		//for (int i=0 ; i<totalElementos; i++) { DESCOMENTAR ESTO!!! LO HAGO POR AHORA SOLO PARA PRUEBAS
-    	for (int i=0 ; i<1; i++) {
-			try {
-				sPuntoTitulo = menuObject.getJSONArray(i).getString(0);
-				sPuntoDireccion = menuObject.getJSONArray(i).getString(1);
+		for (int i=0 ; i<totalElementos; i++) {
+    		try {
+				sPuntoTitulo      = menuObject.getJSONArray(i).getString(0);
+				sPuntoDireccion   = menuObject.getJSONArray(i).getString(1);
 				sPuntoDescripcion = menuObject.getJSONArray(i).getString(2);
-				sPuntoCorreoE = menuObject.getJSONArray(i).getString(3);
-				dPuntoLatitud = menuObject.getJSONArray(i).getDouble(4);
-				dPuntoLongitud = menuObject.getJSONArray(i).getDouble(5);
-				iPuntoEstado = menuObject.getJSONArray(i).getInt(6);
-				sPuntoImagenPrincipalPath = menuObject.getJSONArray(i).getString(7);
 				
-				Log.d("MapaActivity","Titulo:      "+sPuntoTitulo);
-				Log.d("MapaActivity","Direccion:   "+sPuntoDireccion);
-				Log.d("MapaActivity","Descripcion: "+sPuntoDescripcion);
-				Log.d("MapaActivity","Correo e:    "+sPuntoCorreoE);
-				Log.d("MapaActivity","Latitud:     "+dPuntoLatitud);
-				Log.d("MapaActivity","Longitud:    "+dPuntoLongitud);
-				Log.d("MapaActivity","Estado:      "+iPuntoEstado);
-				Log.d("MapaActivity","Path imagen: "+sPuntoImagenPrincipalPath);
+				sPuntoCorreoE     = menuObject.getJSONArray(i).getString(3);
+				dPuntoLatitud     = menuObject.getJSONArray(i).getDouble(4);
+				dPuntoLongitud    = menuObject.getJSONArray(i).getDouble(5);
+				iPuntoEstado      = menuObject.getJSONArray(i).getInt(6);
 				
-				// 4. Se recibe la imagen principal del punto desde el servidor
-				recibirImagenPrincipalPunto();
+				iLongitudCadena = menuObject.getJSONArray(i).length();
+				Log.d("MapaActivity","Total: " + iLongitudCadena);
+				
+				sPuntoImagenPrincipalThumbPath = menuObject.getJSONArray(i).getString(7);
+				sPuntoImagenPrincipalPath      = menuObject.getJSONArray(i).getString(8);
+				
+				// Si la longitud es al menos 10, es que se recibe imagen Aux1 del punto
+				if (iLongitudCadena >= 10) {
+				
+					sPuntoImagenAux1Path           = menuObject.getJSONArray(i).getString(9);
+					
+					// Si la longitud es 11, es que también se recibe imagen Aux2 del punto
+					if (iLongitudCadena == 11) {
+						sPuntoImagenAux2Path           = menuObject.getJSONArray(i).getString(10);	
+					}
+				} 
+					
+				Log.d("MapaActivity","Titulo:                "+sPuntoTitulo);
+				Log.d("MapaActivity","Direccion:             "+sPuntoDireccion);
+				Log.d("MapaActivity","Descripcion:           "+sPuntoDescripcion);
+				Log.d("MapaActivity","Correo e:              "+sPuntoCorreoE);
+				Log.d("MapaActivity","Latitud:               "+dPuntoLatitud);
+				Log.d("MapaActivity","Longitud:              "+dPuntoLongitud);
+				Log.d("MapaActivity","Estado:                "+iPuntoEstado);
+				
+				Log.d("MapaActivity","Path imagen principal:       "+sPuntoImagenPrincipalPath);
+				Log.d("MapaActivity","Path imagen principal thumb: "+sPuntoImagenPrincipalThumbPath);
+				Log.d("MapaActivity","Path imagen aux1:            "+sPuntoImagenAux1Path);
+				Log.d("MapaActivity","Path imagen aux2:            "+sPuntoImagenAux2Path);
+				
+				// 4. Se recibe el thumbnail de la imagen principal del punto desde el servidor para mostrarla por pantalla
+				recibirImagenPrincipalThumbPunto();
 				
 				// 5. El punto descargado se añade a la lista de puntos que se muestran en el mapa
 				iLatitud = (int)(dPuntoLatitud * 1E6);
 				iLongitud = (int)(dPuntoLongitud * 1E6);
     			
-    			Log.d("MapaActivity","Latitud: "+iLatitud+" Longitud: "+iLongitud);
-    			
     			point = new GeoPoint(iLatitud, iLongitud);
-				overlayItem = new OverlayItemPunto(point, sPuntoTitulo, "", sPuntoDireccion, sPuntoDescripcion, sPuntoImagenPrincipalPath, "", "", bmImagenPrincipal);
+				overlayItem = new OverlayItemPunto(point, sPuntoTitulo, "", sPuntoDireccion, sPuntoDescripcion, sPuntoImagenPrincipalPath, sPuntoImagenAux1Path, sPuntoImagenAux2Path, sThumbPathAndroid);
 				
 				// Si el estado del punto es 0, el punto es inaccesible. Si es 1, el punto es accesible
 				if (iPuntoEstado == 0) {
@@ -299,8 +328,8 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
 		}
     }
     
-    private void recibirImagenPrincipalPunto() {
-    	File img = new File("/sdcard/app/tmp/abilidade/" + sPuntoImagenPrincipalPath);
+    private void recibirImagenPrincipalThumbPunto() {
+    	File img = new File("/sdcard/app/tmp/abilidade/" + sPuntoImagenPrincipalThumbPath);
 
         // Create directories
         new File("/sdcard/app/tmp/abilidade").mkdirs();
@@ -308,7 +337,7 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
         // only download new images
         if (!img.exists()) {
 	    	try {
-	    		String ruta = AbilidadeApplication.RUTA_IMAGEN+sPuntoImagenPrincipalPath;
+	    		String ruta = AbilidadeApplication.RUTA_IMAGEN+sPuntoImagenPrincipalThumbPath;
 	    		URL imageUrl = new URL(ruta);
 	    		InputStream in = imageUrl.openStream();
 	    		OutputStream out = new BufferedOutputStream(new FileOutputStream(img));
@@ -326,14 +355,14 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
         }
         
         // Se obtiene la imagen principal y se escala a un tamaño adecuado
-        bmImagenPrincipal = BitmapFactory.decodeFile(img.getAbsolutePath());
-        bmImagenPrincipal = AbilidadeApplication.escalarImagen(bmImagenPrincipal);
+        sThumbPathAndroid = img.getAbsolutePath();
+        bmImagenPrincipalThumb = BitmapFactory.decodeFile(sThumbPathAndroid);
     }
     
     private String recibirJSON() {
     	StringBuilder builder = new StringBuilder();
 		HttpClient client = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet("http://abilidade.eu/r/puntos.php");
+		HttpGet httpGet = new HttpGet("http://abilidade.eu/r/puntosv2.php");
 		
 		try {
 			HttpResponse response = client.execute(httpGet);

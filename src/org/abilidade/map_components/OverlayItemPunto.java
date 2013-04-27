@@ -15,10 +15,10 @@ public class OverlayItemPunto extends OverlayItem {
 	private String sImagenAux1 = null;
 	private String sImagenAux2 = null;
 	
-	private Bitmap  bmImagen = null;
+	private String  sImagenPrincipalThumb = null;
 	
 	// Definicion de metodos
-	public OverlayItemPunto(GeoPoint point, String title, String snippet, String direccion, String descripcion, String imagenPrincipal, String imagenAux1, String imagenAux2, Bitmap imagen) {
+	public OverlayItemPunto(GeoPoint point, String title, String snippet, String direccion, String descripcion, String imagenPrincipal, String imagenAux1, String imagenAux2, String imagenThumb) {
 		super(point, title, snippet);
 		this.sTitulo      = title;
 		this.sDireccion   = direccion;
@@ -26,7 +26,7 @@ public class OverlayItemPunto extends OverlayItem {
 		this.sImagenPrincipal = imagenPrincipal;
 		this.sImagenAux1 = imagenAux1;
 		this.sImagenAux2 = imagenAux2;
-		this.bmImagen     = imagen;
+		this.sImagenPrincipalThumb = imagenThumb;
 	}
 
 	public String getsTitulo() {
@@ -77,11 +77,11 @@ public class OverlayItemPunto extends OverlayItem {
 		this.sImagenAux2 = sImagenAux2;
 	}
 
-	public Bitmap getBmImagen() {
-		return bmImagen;
+	public String getsImagenPrincipalThumb() {
+		return sImagenPrincipalThumb;
 	}
 
-	public void setBmImagen(Bitmap bmImagen) {
-		this.bmImagen = bmImagen;
+	public void setsImagenPrincipalThumb(String sImagenPrincipalThumb) {
+		this.sImagenPrincipalThumb = sImagenPrincipalThumb;
 	}
 }

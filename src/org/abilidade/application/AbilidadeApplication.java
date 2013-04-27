@@ -87,6 +87,7 @@ public class AbilidadeApplication extends GDApplication {
 	public static final String PUNTO_DIRECCION   = "direccion";
 	public static final String PUNTO_DESCRIPCION = "descripcion";
 	public static final String PUNTO_IMAGEN_PRINCIPAL = "ImagenPrincipal";
+	public static final String PUNTO_IMAGEN_PRINCIPAL_THUMB = "ImagenPrincipalThumbnail";
 	public static final String PUNTO_IMAGEN_AUX1 = "ImagenAux1";
 	public static final String PUNTO_IMAGEN_AUX2 = "ImagenAux2";
 	
@@ -192,9 +193,9 @@ public class AbilidadeApplication extends GDApplication {
     		else {
     			Dialog foundNothingDlg = new AlertDialog.Builder(context)
     				.setIcon(0)
-    				.setTitle("Fallo al ubicar al usuario")
+    				.setTitle(context.getString(R.string.falloUbicarUsuario))
     				.setPositiveButton("Ok",null)
-    				.setMessage("Ubicación no encontrada...")
+    				.setMessage(context.getString(R.string.ubicacionNoEncontrada))
     				.create();
     			foundNothingDlg.show();
     		}
@@ -247,9 +248,9 @@ public class AbilidadeApplication extends GDApplication {
 		
 		if (width >= height) {
 			scaleWidth = AbilidadeApplication.defaultImageWidth / width;
-			scaleHeight = AbilidadeApplication.defaultImageHeight / height;
+			scaleHeight = (height * (AbilidadeApplication.defaultImageWidth / width));
 		} else {
-			scaleWidth = AbilidadeApplication.defaultImageHeight / width;
+			scaleWidth = (width * (AbilidadeApplication.defaultImageHeight / height)); 
 			scaleHeight = AbilidadeApplication.defaultImageWidth / height;
 		}
 		

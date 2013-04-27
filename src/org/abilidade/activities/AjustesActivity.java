@@ -44,7 +44,7 @@ public class AjustesActivity extends GDActivity {
 				SharedPreferences pref = getApplicationContext().getSharedPreferences(AbilidadeApplication.SHARED_PREFERENCES, 0); // 0 - for private mode
 				Editor editor = pref.edit();
 				
-				editor.putBoolean(AbilidadeApplication.SHPF_LOGIN, true);
+				editor.putBoolean(AbilidadeApplication.SHPF_LOGIN, false);
 				editor.putString(AbilidadeApplication.SHPF_USUARIO, "");
 				
 				editor.commit();

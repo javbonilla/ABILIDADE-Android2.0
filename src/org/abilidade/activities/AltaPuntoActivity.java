@@ -15,18 +15,15 @@ import org.apache.http.entity.mime.content.StringBody;
 
 import org.abilidade.application.AbilidadeApplication;
 import org.abilidade.application.DireccionCompleta;
-import org.abilidade.db.DatabaseCommons;
-import org.abilidade.db.PuntoProvider;
 import org.abilidade.R;
 import org.apache.http.client.ClientProtocolException;
 
-import android.os.Handler;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -34,9 +31,9 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -71,13 +68,10 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 	private EditText editTextTitulo;
 	private EditText editTextDireccion;
 	private EditText editTextDescripcion;
-	private EditText editTextCorreoE;
 	private ImageView imageViewImagenPrincipal;
 	private ImageView imageViewImagenAux1;
 	private ImageView imageViewImagenAux2;
 	private Button buttonAgregarPunto;
-	
-	private ProgressDialog dialogPuntoInsertado;
 	
 	// Atributos utiles para geolocalizar al usuario
 	private boolean ubicarUsuario = false;
@@ -86,26 +80,29 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 	private String provider = "";
 	
 	// Definicion de los atributos relativos al punto inaccesible
-	private String titulo = "";
-	private String direccion = "";
-	private String localidad = "";
-	private String provincia = "";
-	private String descripcion = "";
-	private String correoE = "";
-	private double latitud = 0;
-	private double longitud = 0;
+	private String sTitulo = "";
+	private String sDireccion = "";
+	private String sLocalidad = "";
+	private String sProvincia = "";
+	private String sDescripcion = "";
+	private String sCorreoE = "";
+	private double dLatitud = 0;
+	private double dLongitud = 0;
 
-	private String imagenPrincipalPath = "";
-	private String imagenAux1Path = "";
-	private String imagenAux2Path = "";
+	private String sImagenPrincipalPath = "";
+	private String sImagenAux1Path = "";
+	private String sImagenAux2Path = "";
 	
-	private Bitmap imagenPrincipal = null;
-	private Bitmap imagenAux1 = null; 
-	private Bitmap imagenAux2 = null;
+	private Bitmap bmImagenPrincipal = null;
+	private Bitmap bmImagenAux1 = null; 
+	private Bitmap bmImagenAux2 = null;
 	
 	private Uri mImageUri;
 	
 	private DireccionCompleta direccionCompleta;
+	
+	// ProgressDialog para mientras se registra el punto
+	private ProgressDialog pDialog;
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -121,7 +118,6 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 		editTextTitulo = (EditText) findViewById(R.id.altaPuntoTitulo);
 		editTextDireccion = (EditText) findViewById(R.id.altaPuntoDireccion);
 		editTextDescripcion = (EditText) findViewById(R.id.altaPuntoDescripcion);
-		editTextCorreoE = (EditText) findViewById(R.id.altaPuntoCorreoE);
 		imageViewImagenPrincipal = (ImageView) findViewById(R.id.altaPuntoImagenPrincipal);
 		imageViewImagenAux1 = (ImageView) findViewById(R.id.altaPuntoImagenAux1);
 		imageViewImagenAux2 = (ImageView) findViewById(R.id.altaPuntoImagenAux2);
@@ -133,22 +129,37 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 		if (extras == null) {
 			ubicarUsuario = true; // Es necesario que la Activity se encargue de ubicar al usuario
 		} else {
-			latitud = extras.getDouble(AbilidadeApplication.altaPuntoParametroLatitud, 0);
-			longitud = extras.getDouble(AbilidadeApplication.altaPuntoParametroLongitud, 0);
+			dLatitud = extras.getDouble(AbilidadeApplication.altaPuntoParametroLatitud, 0);
+			dLongitud = extras.getDouble(AbilidadeApplication.altaPuntoParametroLongitud, 0);
 			
-			// Con la latitud y longitud tomadas por parametro obtenemos la direccion aproximada donde se encuentra el usuario
-			direccionCompleta = AbilidadeApplication.obtenerDireccion(AltaPuntoActivity.this, latitud, longitud);
+			Log.d("AltaPunto", "Latitud recibida:  " + dLatitud);
+			Log.d("AltaPunto", "Longitud recibida: " + dLongitud);
 			
-			direccion = direccionCompleta.getDireccion();
-			localidad = direccionCompleta.getLocalidad();
-			provincia = direccionCompleta.getProvincia();
+			if (dLatitud == 0 && dLongitud == 0) {
+				ubicarUsuario = true;
+			} else {
+				// Con la latitud y longitud tomadas por parametro obtenemos la direccion aproximada donde se encuentra el usuario
+				direccionCompleta = AbilidadeApplication.obtenerDireccion(AltaPuntoActivity.this, dLatitud, dLongitud);
+				
+				sDireccion = direccionCompleta.getDireccion();
+				sLocalidad = direccionCompleta.getLocalidad();
+				sProvincia = direccionCompleta.getProvincia();
+				
+				editTextDireccion.setEnabled(true);
+			}
+			
 		}
+		
+		// El correo-e con el que se registrara un punto es el correo-e del usuario logueado en el sistema. Se lee del ShPf
+		SharedPreferences pref = getApplicationContext().getSharedPreferences(AbilidadeApplication.SHARED_PREFERENCES, 0); // 0 - for private mode
+		sCorreoE = pref.getString(AbilidadeApplication.SHPF_USUARIO, "");
+		
+		Log.d("AltaPunto","correo-e con el que se va a registrar:"+sCorreoE);
 		
 		// Asignamos los Listeners correspondientes a todos los elementos de pantalla
 		editTextTitulo.setOnKeyListener(keyListener);
 		editTextDireccion.setOnKeyListener(keyListener);
 		editTextDescripcion.setOnKeyListener(keyListener);
-		editTextCorreoE.setOnKeyListener(keyListener);
 		
 		imageViewImagenPrincipal.setOnClickListener(onClickImageListener);
 		imageViewImagenAux1.setOnClickListener(onClickImageListener);
@@ -166,46 +177,9 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 		@Override
 		public void onClick(View v) {
 			if (validaciones()) {
-				registrarPunto();
-
-				// Enviamos el punto a la web
-				HttpClient httpclient = new DefaultHttpClient();     
-				HttpPost httppost = new HttpPost("http://www.abilidade.eu/r/subircc.php");      
-			 
-				try {         
-					// Imagenes
-					 MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
-					 entity.addPart("titulo",new StringBody(titulo));
-					 entity.addPart("direccion",new StringBody(direccion));
-					 entity.addPart("descripcion",new StringBody(descripcion));
-					 entity.addPart("correoe",new StringBody(correoE));
-					 entity.addPart("latitud",new StringBody(""+latitud));
-					 entity.addPart("longitud",new StringBody(""+longitud));
-					 
-					 File file= new File(imagenPrincipalPath);
-					 entity.addPart("image1",new FileBody(file));
-					 
-					 if (imagenAux1 != null) {
-						 File file2= new File(imagenAux1Path);
-						 entity.addPart("image2",new FileBody(file2));
-					 }
-					 
-					 if (imagenAux2 != null) {
-						 File file3= new File(imagenAux2Path);
-						 entity.addPart("image3",new FileBody(file3));
-					 }
-					 
-					 httppost.setEntity(entity);
-
-				     HttpResponse response = httpclient.execute(httppost);
-					
-				} 
-				catch (ClientProtocolException e) {       
-				} 
-				catch (IOException e) {         
-				} 
 				
-				Toast.makeText(getApplicationContext(), getString(R.string.altaPuntoRegistroExito), Toast.LENGTH_LONG).show();
+				// Se usa una tarea asincrona para poder mostrar mientras tanto un ProgessDialog
+				new asynclogin().execute();
 			}
 		}
 	};
@@ -224,11 +198,11 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 				public void onClick(DialogInterface dialog, int item) {
 			        if (item == VER_FOTO) {
 						if (v.getId() == R.id.altaPuntoImagenPrincipal) {
-							AbilidadeApplication.verFoto(AltaPuntoActivity.this, imagenPrincipalPath, null);
+							AbilidadeApplication.verFoto(AltaPuntoActivity.this, sImagenPrincipalPath, null);
 						} else if (v.getId() == R.id.altaPuntoImagenAux1) {
-							AbilidadeApplication.verFoto(AltaPuntoActivity.this, imagenAux1Path, null);
+							AbilidadeApplication.verFoto(AltaPuntoActivity.this, sImagenAux1Path, null);
 						} else if (v.getId() == R.id.altaPuntoImagenAux2) {
-							AbilidadeApplication.verFoto(AltaPuntoActivity.this, imagenAux2Path, null);
+							AbilidadeApplication.verFoto(AltaPuntoActivity.this, sImagenAux2Path, null);
 						}
 					} else if (item == TOMAR_FOTO) {
 						if (v.getId() == R.id.altaPuntoImagenPrincipal) {
@@ -258,13 +232,11 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 		@Override
 		public boolean onKey(View v, int keyCode, KeyEvent event) {
 			if (v.getId() == R.id.altaPuntoTitulo) {
-				titulo = editTextTitulo.getText().toString();
+				sTitulo = editTextTitulo.getText().toString();
 			} else if (v.getId() == R.id.altaPuntoDireccion) {
-				direccion = editTextDireccion.getText().toString();
+				sDireccion = editTextDireccion.getText().toString();
 			} else if (v.getId() == R.id.altaPuntoDescripcion) {
-				descripcion = editTextDescripcion.getText().toString();
-			} else if (v.getId() == R.id.altaPuntoCorreoE) {
-				correoE = editTextCorreoE.getText().toString();
+				sDescripcion = editTextDescripcion.getText().toString();
 			} else {
 				return false;
 			}
@@ -293,18 +265,17 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 		super.onResume();
 		
 		// Cargamos todos los valores almacenados del punto en los componentes de pantalla
-		editTextTitulo.setText(titulo);
-		editTextDireccion.setText(direccion);
-		editTextDescripcion.setText(descripcion);
-		editTextCorreoE.setText(correoE);
-		if (imagenPrincipal != null) {
-			imageViewImagenPrincipal.setImageBitmap(imagenPrincipal);
+		editTextTitulo.setText(sTitulo);
+		editTextDireccion.setText(sDireccion);
+		editTextDescripcion.setText(sDescripcion);
+		if (bmImagenPrincipal != null) {
+			imageViewImagenPrincipal.setImageBitmap(bmImagenPrincipal);
 		}
-		if (imagenAux1 != null) {
-			imageViewImagenAux1.setImageBitmap(imagenAux1);
+		if (bmImagenAux1 != null) {
+			imageViewImagenAux1.setImageBitmap(bmImagenAux1);
 		}
-		if (imagenAux2 != null) {
-			imageViewImagenAux2.setImageBitmap(imagenAux2);
+		if (bmImagenAux2 != null) {
+			imageViewImagenAux2.setImageBitmap(bmImagenAux2);
 		}
 	}
 	
@@ -312,10 +283,9 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 	protected void onPause() {
 		// Guardamos los valores de todos los EditTexts para poder mostrarlos cuando la Activity vuelva a tener el foco
 		// Las imagenes se han ido guardando segun se han ido tomando, por eso no es necesario guardarlas aqui
-		titulo = editTextTitulo.getText().toString();
-		direccion = editTextDireccion.getText().toString();
-		descripcion = editTextDescripcion.getText().toString();
-		correoE = editTextCorreoE.getText().toString();
+		sTitulo = editTextTitulo.getText().toString();
+		sDireccion = editTextDireccion.getText().toString();
+		sDescripcion = editTextDescripcion.getText().toString();
 		
 		super.onPause();
 	}
@@ -352,18 +322,18 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 	public void onLocationChanged(Location location) {
 		
 		// Con la latitud y longitud obtendremos el resto de campos gracias a la API Geocoder
-		latitud = location.getLatitude();
-		longitud = location.getLongitude();
+		dLatitud = location.getLatitude();
+		dLongitud = location.getLongitude();
 		
 		// A partir de la latitud y longitud, obtenemos la direccion aproximada donde se encuentra el usuario
-		direccionCompleta = AbilidadeApplication.obtenerDireccion(AltaPuntoActivity.this, latitud, longitud);
+		direccionCompleta = AbilidadeApplication.obtenerDireccion(AltaPuntoActivity.this, dLatitud, dLongitud);
 		
-		direccion = direccionCompleta.getDireccion();
-		localidad = direccionCompleta.getLocalidad();
-		provincia = direccionCompleta.getProvincia();
+		sDireccion = direccionCompleta.getDireccion();
+		sLocalidad = direccionCompleta.getLocalidad();
+		sProvincia = direccionCompleta.getProvincia();
 		
 		// Mostramos la direccion al usuario
-		editTextDireccion.setText(direccion);
+		editTextDireccion.setText(sDireccion);
 		
 		// Activamos el EditText para que el usuario pueda modificar la posicion
 		editTextDireccion.setEnabled(true);
@@ -423,18 +393,18 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 	private boolean validaciones() {
 		
 		// Lo primero que vamos a hacer es recoger los campos obligatorios, para comprobar si el usuario los ha rellenado
-		titulo = editTextTitulo.getText().toString();
-		direccion = editTextDireccion.getText().toString();
+		sTitulo = editTextTitulo.getText().toString();
+		sDireccion = editTextDireccion.getText().toString();
 		
-		if (titulo.length() == 0 || titulo == null) {
+		if (sTitulo.length() == 0 || sTitulo == null) {
 			Toast.makeText(getApplicationContext(), getString(R.string.altaPuntoValidacionTitulo), Toast.LENGTH_LONG).show();
 			return false;
 		} 
-		if (direccion.length() == 0 || direccion == null) {
+		if (sDireccion.length() == 0 || sDireccion == null) {
 			Toast.makeText(getApplicationContext(), getString(R.string.altaPuntoValidacionDireccion), Toast.LENGTH_LONG).show();
 			return false;
 		}
-		if (imagenPrincipal == null) {
+		if (bmImagenPrincipal == null) {
 			Toast.makeText(getApplicationContext(), getString(R.string.altaPuntoValidacionImagen), Toast.LENGTH_LONG).show();
 			return false;
 		}
@@ -492,22 +462,22 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 	    {
 	    	switch(destinoFoto) {
 	    		case TOMAR_FOTO_PRINCIPAL:
-	    			imagenPrincipalPath = mImageUri.getPath();
-	    	    	imagenPrincipal = android.provider.MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
-	    	    	imagenPrincipal = AbilidadeApplication.rotarImagen(imagenPrincipalPath, imagenPrincipal);
-	    	    	imageViewImagenPrincipal.setImageBitmap(imagenPrincipal);
+	    			sImagenPrincipalPath = mImageUri.getPath();
+	    	    	bmImagenPrincipal = android.provider.MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
+	    	    	bmImagenPrincipal = AbilidadeApplication.rotarImagen(sImagenPrincipalPath, bmImagenPrincipal);
+	    	    	imageViewImagenPrincipal.setImageBitmap(bmImagenPrincipal);
 	    			break;
 	    		case TOMAR_FOTO_AUX1:
-	    			imagenAux1Path = mImageUri.getPath();
-	    	    	imagenAux1 = android.provider.MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
-	    	    	imagenAux1 = AbilidadeApplication.rotarImagen(imagenAux1Path, imagenAux1);
-	    	        imageViewImagenAux1.setImageBitmap(imagenAux1);
+	    			sImagenAux1Path = mImageUri.getPath();
+	    	    	bmImagenAux1 = android.provider.MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
+	    	    	bmImagenAux1 = AbilidadeApplication.rotarImagen(sImagenAux1Path, bmImagenAux1);
+	    	        imageViewImagenAux1.setImageBitmap(bmImagenAux1);
 	    			break;
 	    		case TOMAR_FOTO_AUX2:
-	    			imagenAux2Path = mImageUri.getPath();
-	    	    	imagenAux2 = android.provider.MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
-	    	    	imagenAux2 = AbilidadeApplication.rotarImagen(imagenAux2Path, imagenAux2);
-	    	        imageViewImagenAux2.setImageBitmap(imagenAux2);
+	    			sImagenAux2Path = mImageUri.getPath();
+	    	    	bmImagenAux2 = android.provider.MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
+	    	    	bmImagenAux2 = AbilidadeApplication.rotarImagen(sImagenAux2Path, bmImagenAux2);
+	    	        imageViewImagenAux2.setImageBitmap(bmImagenAux2);
 	    			break;
 	    	}
 	    }
@@ -536,119 +506,27 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
         
         switch(destinoFoto) {
         	case ELEGIR_GALERIA_PRINCIPAL:
-        		imagenPrincipal = BitmapFactory.decodeFile(filePath);
-        		imagenPrincipal = AbilidadeApplication.rotarImagen(filePath, imagenPrincipal);
-                imagenPrincipalPath = filePath;
-                imageViewImagenPrincipal.setImageBitmap(imagenPrincipal);
+        		bmImagenPrincipal = BitmapFactory.decodeFile(filePath);
+        		bmImagenPrincipal = AbilidadeApplication.rotarImagen(filePath, bmImagenPrincipal);
+        		bmImagenPrincipal = AbilidadeApplication.escalarImagen(bmImagenPrincipal);
+                sImagenPrincipalPath = filePath;
+                
+                imageViewImagenPrincipal.setImageBitmap(bmImagenPrincipal);
         		break;
         	case ELEGIR_GALERIA_AUX1:
-        		imagenAux1 = BitmapFactory.decodeFile(filePath);
-        		imagenAux1 = AbilidadeApplication.rotarImagen(filePath, imagenAux1);
-                imagenAux1Path = filePath;
-                imageViewImagenAux1.setImageBitmap(imagenAux1);
+        		bmImagenAux1 = BitmapFactory.decodeFile(filePath);
+        		bmImagenAux1 = AbilidadeApplication.rotarImagen(filePath, bmImagenAux1);
+                sImagenAux1Path = filePath;
+                imageViewImagenAux1.setImageBitmap(bmImagenAux1);
         		break;
         	case ELEGIR_GALERIA_AUX2:
-        		imagenAux2 = BitmapFactory.decodeFile(filePath);
-        		imagenAux2 = AbilidadeApplication.rotarImagen(filePath, imagenAux2);
-                imagenAux2Path = filePath;
-                imageViewImagenAux2.setImageBitmap(imagenAux2);
+        		bmImagenAux2 = BitmapFactory.decodeFile(filePath);
+        		bmImagenAux2 = AbilidadeApplication.rotarImagen(filePath, bmImagenAux2);
+                sImagenAux2Path = filePath;
+                imageViewImagenAux2.setImageBitmap(bmImagenAux2);
         		break;
         }
-        
-        /** ESTO ES PARA OBTENER EL THUMBNAIL DE LA IMAGEN **/
-		/* //imageUri será la uri de la imagen que vamos a obtener el thumb
-		// String uriThumb = "";
-		//Obtenemos el último segmento de la uri que es el que nos indica el ID
-		long uriThumbId = Long.parseLong(selectedImage.getLastPathSegment());
-		 
-		//Más info sobre esta función en
-		// http://developer.android.com/reference/android/provider/MediaStore.Images.Thumbnails.html
-		Cursor cursor = android.provider.MediaStore.Images.Thumbnails.queryMiniThumbnail(getContentResolver(), uriThumbId, android.provider.MediaStore.Images.Thumbnails.MINI_KIND, null);
-		
-		 
-		//Comprobamos que no tengamos un cursor nulo y que hayamos obtenido almenos un resultado
-		if (cursor != null && cursor.getCount() > 0) {
-    		cursor.moveToFirst(); //Como en este caso sólo nos interesa una imagen vamos al primer registro
-    		 
-    		//cursor.getColumnIndex(MediaStore.Images.Thumbnails.DATA)
-    		//Obtiene el índice de la columna que queremos obtener el valor, en nuestro caso obtenemos el campo data
-    		//cursor.getString(indiceColumna) 
-    		//Obtenemos el valor de la columna seleccionada
-    		 
-    		uriThumb = cursor.getString(cursor.getColumnIndex(android.provider.MediaStore.Images.Thumbnails.DATA));
-    		cursor.close();
-    		
-    		Bitmap yourSelectedImage = BitmapFactory.decodeFile(uriThumb);
-            imagenCentral.setImageBitmap(yourSelectedImage);
-		} */
 	}
-	
-	/**
-	 * registrarPunto: registra el punto con la informacion ofrecida por el usuario en la BD local de su terminal
-	 */
-	private void registrarPunto() {
-		
-		// Mostramos un ProgressDialog indicando al usuario que se esta llevando a cabo la operacion
-		dialogPuntoInsertado = ProgressDialog.show(AltaPuntoActivity.this, "", getString(R.string.altaPuntoRegistrandoPunto), true, false);
-		
-		// Lanzamos un nuevo thread en el que se llevara a cabo el registro de punto inaccesible
-		Thread thr = new Thread() {
-			public void run() {
-				String imagenPrincipalTexto = "";
-				String imagenAux1Texto = "";
-				String imagenAux2Texto = "";
-				
-				// Se escalan y convierten todas las imagenes a un tamaño adecuado
-				imagenPrincipal = AbilidadeApplication.escalarImagen(imagenPrincipal);
-				imagenPrincipalTexto = AbilidadeApplication.convertirImagen(imagenPrincipal);
-				if (imagenAux1 != null) {
-					imagenAux1 = AbilidadeApplication.escalarImagen(imagenAux1);
-					imagenAux1Texto = AbilidadeApplication.convertirImagen(imagenAux1);
-				}
-				if (imagenAux2 != null) {
-					imagenAux2 = AbilidadeApplication.escalarImagen(imagenAux2);
-					imagenAux2Texto = AbilidadeApplication.convertirImagen(imagenAux2);
-				}
-				
-				// Y ahora se informan todos los campos
-				ContentValues values = new ContentValues();
-				values.put(DatabaseCommons.Punto.TITULO, titulo);
-				values.put(DatabaseCommons.Punto.DIRECCION, direccion);
-				values.put(DatabaseCommons.Punto.LOCALIDAD, localidad);
-				values.put(DatabaseCommons.Punto.PROVINCIA, provincia);
-				values.put(DatabaseCommons.Punto.DESCRIPCION, descripcion);
-				values.put(DatabaseCommons.Punto.ESTADO, AbilidadeApplication.ESTADO_ABIERTO);
-				values.put(DatabaseCommons.Punto.CORREOE, correoE);
-				values.put(DatabaseCommons.Punto.LATITUD, latitud);
-				values.put(DatabaseCommons.Punto.LONGITUD, longitud);
-				values.put(DatabaseCommons.Punto.SINCRONIZADO, AbilidadeApplication.PUNTO_NO_SINCRONIZADO); // Se registra el punto como no sincronizado
-				values.put(DatabaseCommons.Punto.IMAGEN_PRINCIPAL, imagenPrincipalTexto);
-				values.put(DatabaseCommons.Punto.IMAGEN_AUX1, imagenAux1Texto);
-				values.put(DatabaseCommons.Punto.IMAGEN_AUX2, imagenAux2Texto);
-				
-				// Por ultimo, guardamos el punto en la BD local del terminal
-				getContentResolver().insert(PuntoProvider.CONTENT_URI, values);
-				
-				// Enviamos un mensaje diciendo que todo se ha realizado correctamente
-				uiCallback.sendEmptyMessage(0);
-			}
-		};
-		thr.start();
-	}
-	
-	private Handler uiCallback = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			
-			dialogPuntoInsertado.dismiss();
-			
-			// Notificamos al usuario que la insercion ha sido correcta
-			Toast.makeText(getApplicationContext(), getString(R.string.altaPuntoRegistroExito), Toast.LENGTH_LONG).show();
-			
-			// Como el punto ha sido dado de alta, cerramos la Activity
-			finish();
-		}
-	};
 	
 	@Override
 	protected void onStop() {
@@ -656,6 +534,79 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 			lm.removeUpdates(this);
 		}
 		
+		pDialog = null;
+		
 		super.onStop();
+	}
+	
+	/*		CLASE ASYNCTASK
+	 * Se usa esta clase para poder mostrar el dialogo de progreso mientras se envian y obtienen los datos.     
+	 */
+
+	class asynclogin extends AsyncTask< String, String, String > {
+		 
+		protected void onPreExecute() {
+	    	//para el progress dialog
+	        pDialog = new ProgressDialog(AltaPuntoActivity.this);
+	        pDialog.setMessage(getString(R.string.altaPuntoRegistrandoPunto));
+	        pDialog.setIndeterminate(false);
+	        pDialog.setCancelable(false);
+	        pDialog.show();
+	    }
+
+		protected String doInBackground(String... params) {
+			// Enviamos el punto a la web
+			HttpClient httpclient = new DefaultHttpClient();     
+			HttpPost httppost = new HttpPost("http://www.abilidade.eu/r/subirccv2.php");      
+		 
+			try {         
+				// Imagenes
+				 MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+				 entity.addPart("titulo",new StringBody(sTitulo));
+				 entity.addPart("direccion",new StringBody(sDireccion));
+				 entity.addPart("descripcion",new StringBody(sDescripcion));
+				 entity.addPart("correoe",new StringBody(sCorreoE));
+				 entity.addPart("latitud",new StringBody(""+dLatitud));
+				 entity.addPart("longitud",new StringBody(""+dLongitud));
+				 
+				 File file= new File(sImagenPrincipalPath);
+				 entity.addPart("image1",new FileBody(file));
+				 
+				 if (bmImagenAux1 != null) {
+					 File file2= new File(sImagenAux1Path);
+					 entity.addPart("image2",new FileBody(file2));
+				 }
+				 
+				 if (bmImagenAux2 != null) {
+					 File file3= new File(sImagenAux2Path);
+					 entity.addPart("image3",new FileBody(file3));
+				 }
+				 
+				 httppost.setEntity(entity);
+
+			     HttpResponse response = httpclient.execute(httppost);
+			     Log.d("AltaPunto","response: "+response.toString());
+				
+			} 
+			catch (ClientProtocolException e) {       
+			} 
+			catch (IOException e) {         
+			} 
+			
+			return AbilidadeApplication.RETORNO_OK;
+	    	
+		}
+	   
+		protected void onPostExecute(String result) {
+
+		    if (pDialog != null) {
+		    	pDialog.dismiss();//ocultamos progess dialog.
+		    }
+			
+	       Log.d("AltaPuntoOnPostExecute=",""+result);
+	       
+			// Si el registro del punto ha finalizado con exito, se finaliza la actividad
+			finish();
+	     }
 	}
 }
