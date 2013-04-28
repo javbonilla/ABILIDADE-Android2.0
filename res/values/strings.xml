@@ -8,6 +8,8 @@
     <string name="acceder">Acceder</string>
     <string name="descripcion">Descripción</string>
     <string name="accediendo">Accediendo...</string>
+    <string name="descargandoPuntos">Descargando puntos. Espere, por favor...</string>
+    <string name="descargandoRutas">Descargando rutas accesibles. Espere, por favor...</string>
     <string name="cargandoEsperePorFavor">Cargando aplicación. Espere, por favor...</string>
     <string name="detallePuntoImagenPrincipal">Imagen principal del punto</string>
     <string name="direccionCorreo">Dirección de correo electrónico</string>
@@ -32,6 +34,8 @@
     <string name="altaPuntoVerFoto">Ver foto</string>
     <string name="altaPuntoTomarFoto">Tomar foto</string>
     <string name="altaPuntoElegirGaleria"> Elegir de la galería</string>
+    <string name="vistaSatelite">Vista Satélite</string>
+    <string name="vistaMapa">Vista Mapa</string>
     <string name="altaPuntoSeleccioneOpcion">Seleccione una opción</string>
     <string name="altaPuntoFalloFotoTomada">Se produjo un fallo al cargar la foto tomada</string>
     <string name="altaPuntoValidacionTitulo">Debe introducir un título para el punto inaccesible</string>
@@ -42,7 +46,6 @@
     <string name="altaPuntoTrabajando">Trabajando...</string>
     <string name="altaPuntoRegistrandoPunto">Registrando punto inaccesible. Espere, por favor</string>
     <string name="altaPuntoRegistroExito">Punto inaccesible registrado con éxito</string>
-    <string name="ubicacionGPS">Obteniendo ubicación GPS...</string>
     <string name="ubicacionRed">Obteniendo ubicación basada en red...</string>
     <string name="recomiendaUbicacion">Se recomienda activar el GPS o la ubicación basada en red \n
         							   para establecer la ubicación del usuario</string>

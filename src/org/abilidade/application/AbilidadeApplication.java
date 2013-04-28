@@ -91,6 +91,9 @@ public class AbilidadeApplication extends GDApplication {
 	public static final String PUNTO_IMAGEN_AUX1 = "ImagenAux1";
 	public static final String PUNTO_IMAGEN_AUX2 = "ImagenAux2";
 	
+	// Resultado
+	public static final String RESULT = "result";
+	
 	// Ruta de una imagen
 	public static final String RUTA_IMAGEN = "http://abilidade.eu/r/imgpoint/";
 	

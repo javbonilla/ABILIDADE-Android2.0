@@ -8,4 +8,6 @@
           android:icon="@android:drawable/ic_menu_preferences"></item>
     <item android:id="@+id/menuMapaAyuda" android:title="@string/ayuda"
           android:icon="@android:drawable/ic_menu_help"></item>
+    <item android:id="@+id/menuMapaVista" android:title="@string/vistaSatelite"
+          android:icon="@android:drawable/ic_menu_mapmode"></item>
 </menu>

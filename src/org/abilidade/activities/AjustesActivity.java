@@ -60,9 +60,22 @@ public class AjustesActivity extends GDActivity {
                 startActivity(i);
                 
                 // 4. Se finaliza esta Activity
+                Intent returnIntent = new Intent();
+        		setResult(RESULT_OK,returnIntent);
                 finish();
 			}
 		});
+	}
+	
+	@Override
+	protected void onStop() {
+		
+		// Se retorna como resultado RESULT_CANCEL, para que MapaActivity reciba este resultado y no termine cuando el usuario
+		// ha tocado en "volver"
+		Intent returnIntent = new Intent();
+		setResult(RESULT_CANCELED,returnIntent);
+		
+		super.onStop();
 	}
 
 }

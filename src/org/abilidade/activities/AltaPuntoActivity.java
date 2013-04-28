@@ -297,11 +297,9 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 		// Comprobamos los sensores que hay activos. Si no hay ninguno activo, mostraremos la pantalla de ajustes
 	   	lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 	   	if (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-	   		Toast.makeText(getApplicationContext(), getString(R.string.ubicacionGPS), Toast.LENGTH_SHORT).show();
 	   		sensor = AbilidadeApplication.SENSOR_GPS;
 	   	} 
 	   	else if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-	   		Toast.makeText(getApplicationContext(), getString(R.string.ubicacionRed), Toast.LENGTH_SHORT).show();
 	   		sensor = AbilidadeApplication.SENSOR_NETWORK;
 	   	} else {
 	   		Toast.makeText(getApplicationContext(), getString(R.string.recomiendaUbicacion), Toast.LENGTH_LONG).show();
