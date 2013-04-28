@@ -1,6 +1,8 @@
 package org.abilidade.activities;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.http.HttpResponse;
@@ -26,7 +28,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -461,22 +465,28 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 	    	switch(destinoFoto) {
 	    		case TOMAR_FOTO_PRINCIPAL:
 	    			sImagenPrincipalPath = mImageUri.getPath();
-	    	    	bmImagenPrincipal = android.provider.MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
-	    	    	bmImagenPrincipal = AbilidadeApplication.rotarImagen(sImagenPrincipalPath, bmImagenPrincipal);
-	    	    	imageViewImagenPrincipal.setImageBitmap(bmImagenPrincipal);
-	    			break;
+	    	    	
+	    			// Se redimensiona primero la imagen y luego se carga al imageView correspondiente
+	    			bmImagenPrincipal = decodeSampledBitmapFromResource(sImagenPrincipalPath, AbilidadeApplication.defaultImageWidth, AbilidadeApplication.defaultImageHeight);
+	    			imageViewImagenPrincipal.setImageBitmap(bmImagenPrincipal);
+	    	    	
+	    	    	break;
 	    		case TOMAR_FOTO_AUX1:
 	    			sImagenAux1Path = mImageUri.getPath();
-	    	    	bmImagenAux1 = android.provider.MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
-	    	    	bmImagenAux1 = AbilidadeApplication.rotarImagen(sImagenAux1Path, bmImagenAux1);
-	    	        imageViewImagenAux1.setImageBitmap(bmImagenAux1);
-	    			break;
+	    			
+	    			// Se redimensiona primero la imagen y luego se carga al imageView correspondiente
+	    			bmImagenAux1 = decodeSampledBitmapFromResource(sImagenAux1Path, AbilidadeApplication.defaultImageWidth, AbilidadeApplication.defaultImageHeight);
+	    			imageViewImagenAux1.setImageBitmap(bmImagenAux1);
+	    	    	
+	    	    	break;
 	    		case TOMAR_FOTO_AUX2:
 	    			sImagenAux2Path = mImageUri.getPath();
-	    	    	bmImagenAux2 = android.provider.MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
-	    	    	bmImagenAux2 = AbilidadeApplication.rotarImagen(sImagenAux2Path, bmImagenAux2);
-	    	        imageViewImagenAux2.setImageBitmap(bmImagenAux2);
-	    			break;
+
+	    			// Se redimensiona primero la imagen y luego se carga al imageView correspondiente
+	    			bmImagenAux2 = decodeSampledBitmapFromResource(sImagenAux2Path, AbilidadeApplication.defaultImageWidth, AbilidadeApplication.defaultImageHeight);
+	    			imageViewImagenAux2.setImageBitmap(bmImagenAux2);
+	    	    	
+	    	    	break;
 	    	}
 	    }
 	    catch (Exception e)
@@ -504,26 +514,68 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
         
         switch(destinoFoto) {
         	case ELEGIR_GALERIA_PRINCIPAL:
-        		bmImagenPrincipal = BitmapFactory.decodeFile(filePath);
-        		bmImagenPrincipal = AbilidadeApplication.rotarImagen(filePath, bmImagenPrincipal);
-        		bmImagenPrincipal = AbilidadeApplication.escalarImagen(bmImagenPrincipal);
-                sImagenPrincipalPath = filePath;
+        		
+        		// Se redimensiona primero la imagen y luego se carga al imageView correspondiente
+        		bmImagenPrincipal = decodeSampledBitmapFromResource(filePath, AbilidadeApplication.defaultImageWidth, AbilidadeApplication.defaultImageHeight);
+        		
+        		
+        		sImagenPrincipalPath = filePath;
                 
                 imageViewImagenPrincipal.setImageBitmap(bmImagenPrincipal);
         		break;
         	case ELEGIR_GALERIA_AUX1:
-        		bmImagenAux1 = BitmapFactory.decodeFile(filePath);
-        		bmImagenAux1 = AbilidadeApplication.rotarImagen(filePath, bmImagenAux1);
-                sImagenAux1Path = filePath;
-                imageViewImagenAux1.setImageBitmap(bmImagenAux1);
+        		
+        		// Se redimensiona primero la imagen y luego se carga al imageView correspondiente
+        		bmImagenAux1 = decodeSampledBitmapFromResource(filePath, AbilidadeApplication.defaultImageWidth, AbilidadeApplication.defaultImageHeight);
+        		sImagenAux1Path = filePath;
+                
+        		imageViewImagenAux1.setImageBitmap(bmImagenAux1);
         		break;
         	case ELEGIR_GALERIA_AUX2:
-        		bmImagenAux2 = BitmapFactory.decodeFile(filePath);
-        		bmImagenAux2 = AbilidadeApplication.rotarImagen(filePath, bmImagenAux2);
-                sImagenAux2Path = filePath;
-                imageViewImagenAux2.setImageBitmap(bmImagenAux2);
+        		// Se redimensiona primero la imagen y luego se carga al imageView correspondiente
+        		bmImagenAux2 = decodeSampledBitmapFromResource(filePath, AbilidadeApplication.defaultImageWidth, AbilidadeApplication.defaultImageHeight);
+        		sImagenAux2Path = filePath;
+                
+        		imageViewImagenAux2.setImageBitmap(bmImagenAux2);
         		break;
         }
+	}
+	
+	public Bitmap decodeSampledBitmapFromResource(String filePath, int iDesiredWidth, int iDesiredHeight) {
+		 
+		// 1. Primero se descodifica la imagen con inJustDecodeBounds=true para comprobar las propiedades de la imagen
+		final BitmapFactory.Options options = new BitmapFactory.Options();
+	    options.inJustDecodeBounds = true;
+	    BitmapFactory.decodeFile(filePath, options);
+	    
+	    // Calculate inSampleSize
+	    options.inSampleSize = calculateInSampleSize(options, iDesiredWidth, iDesiredHeight);
+
+	    // Decode bitmap with inSampleSize set
+	    options.inJustDecodeBounds = false;
+	    return BitmapFactory.decodeFile(filePath, options);
+	}
+	
+	public int calculateInSampleSize(Options options, int iDesiredWidth, int iDesiredHeight) {
+		
+		// Raw height and width of image
+	    final int height = options.outHeight;
+	    final int width = options.outWidth;
+	    int inSampleSize = 1;
+
+	    if (height > iDesiredWidth || width > iDesiredHeight) {
+
+	        // Calculate ratios of height and width to requested height and width
+	        final int heightRatio = Math.round((float) height / (float) iDesiredHeight);
+	        final int widthRatio = Math.round((float) width / (float) iDesiredWidth);
+
+	        // Choose the smallest ratio as inSampleSize value, this will guarantee
+	        // a final image with both dimensions larger than or equal to the
+	        // requested height and width.
+	        inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+	    }
+
+	    return inSampleSize;
 	}
 	
 	@Override
@@ -558,7 +610,7 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 			HttpPost httppost = new HttpPost("http://www.abilidade.eu/r/subirccv2.php");      
 		 
 			try {         
-				// Imagenes
+				 // Imagenes
 				 MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 				 entity.addPart("titulo",new StringBody(sTitulo));
 				 entity.addPart("direccion",new StringBody(sDireccion));
@@ -568,6 +620,7 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 				 entity.addPart("longitud",new StringBody(""+dLongitud));
 				 
 				 File file= new File(sImagenPrincipalPath);
+				 
 				 entity.addPart("image1",new FileBody(file));
 				 
 				 if (bmImagenAux1 != null) {

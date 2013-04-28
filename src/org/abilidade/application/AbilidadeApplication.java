@@ -32,8 +32,8 @@ public class AbilidadeApplication extends GDApplication {
 	public static final String ZoomImagenActivityImagenPath = "imagenPath";
 	public static final String ZoomImagenActivityImagenCod = "imagenCod";
  
-	public static final float defaultImageWidth = 800;
-	public static final float defaultImageHeight = 600;
+	public static final int defaultImageWidth = 800;
+	public static final int defaultImageHeight = 600;
 	public static final int calidadImagen = 90; // Con una calidad de 90 podemos bajar de 300Kb a 90Kb el peso de la imagen
 
 	public static final String altaPuntoParametroLatitud = "latitud";
@@ -220,7 +220,7 @@ public class AbilidadeApplication extends GDApplication {
 		if (imagenPath.length() == 0 && imagenCod == null) {
 			Toast.makeText(packageContext, packageContext.getString(R.string.altaPuntoSinImagen), Toast.LENGTH_LONG).show();
 		} else {
-			// Llamos a la Activity que nos permite ver la imagen a tamaÃ±o completo
+			// Llamos a la Activity que nos permite ver la imagen a tamaño completo
 			Intent intent = new Intent();
 			intent.setClass(packageContext, ZoomImagenActivity.class);
 			intent.putExtra(AbilidadeApplication.ZoomImagenActivityImagenPath, imagenPath);
@@ -229,11 +229,11 @@ public class AbilidadeApplication extends GDApplication {
 		}
 	}
 	
-	/**
+/*	*//**
 	 * escalarImagen: Este metodo se encarga de escalar una imagen a las dimensiones marcadas por defecto en AbilidadeApplication
 	 * @param imagen: imagen a escalar
 	 * @return Bitmap: imagen escalada
-	 */
+	 *//*
 	public static Bitmap escalarImagen(Bitmap imagen) {
 		
 		// Se obtienen las dimensiones originales de la imagen
@@ -265,5 +265,5 @@ public class AbilidadeApplication extends GDApplication {
 		Bitmap escaledImage = Bitmap.createBitmap(imagen, 0, 0, width, height, matrix, false);
 		
 		return escaledImage;
-	}
+	}*/
 }
