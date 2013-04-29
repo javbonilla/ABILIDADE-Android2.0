@@ -251,9 +251,10 @@ public class AltaPuntoActivity extends GDActivity implements LocationListener {
 	@Override
     public boolean onHandleActionBarItemClick(ActionBarItem item, int position) {
         if (item.getItemId() == R.id.action_bar_help) {
-        	Intent intent = new Intent();
-        	intent.setClass(AltaPuntoActivity.this, AyudaAltaPunto.class);
-        	startActivity(intent);
+        	// Lo que se hace es llamar al navegador con la pagina para la ayuda
+			Intent i = new Intent(Intent.ACTION_VIEW);
+			i.setData(Uri.parse("http://abilidade.eu/r/androidhelp/registrar_punto.htm"));
+			startActivity(i);
 		} else if (item.getItemId() == R.id.action_bar_refresh) {
 			editTextDireccion.setText("");
 			editTextDireccion.setHint(R.string.obteniendoDireccion);

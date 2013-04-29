@@ -44,6 +44,7 @@ public class AccederActivity extends Activity {
 	private Button buttonCrearCuenta;
 	
 	private TextView textViewOlvidastePass;
+	private TextView textViewAyuda;
 	
 	// Atributos de la clase
 	
@@ -51,6 +52,7 @@ public class AccederActivity extends Activity {
 	private String sPassword;
 	
 	private boolean bValidacionOk;
+	private boolean bMantenerAplicacion;
 	
 	private ProgressDialog pDialog;
 	
@@ -60,6 +62,7 @@ public class AccederActivity extends Activity {
 	
 	private final String sURLConnect = "http://abilidade.eu/r/loginmovil/acces.php";
 	private final String sURLForgotPassword = "http://abilidade.eu/r/loginmovil/recordar.html";
+	private final String sURLAyuda = "http://abilidade.eu/r/androidhelp/help_menu_login.htm";
 	
 	// ************************** DEFINICION DE METODOS DE LA CLASE  ************************** //
 
@@ -76,11 +79,20 @@ public class AccederActivity extends Activity {
 		buttonAcceder         = (Button)   findViewById(R.id.loginBotonAcceder);
 		buttonCrearCuenta     = (Button)   findViewById(R.id.loginBotonCrearCuenta);
 		textViewOlvidastePass = (TextView) findViewById(R.id.loginTextoOlvidarPassword);
+		textViewAyuda         = (TextView) findViewById(R.id.loginTextoAyuda);
 		
 		// Formato para el texto de olvidaste password
 		SpannableString content = new SpannableString(textViewOlvidastePass.getText().toString()); 
 		content.setSpan(new UnderlineSpan(), 0, content.length(), 0); 
 		textViewOlvidastePass.setText(content); 
+		
+		// Formato para el texto de olvidaste password
+		SpannableString content2 = new SpannableString(textViewAyuda.getText().toString()); 
+		content2.setSpan(new UnderlineSpan(), 0, content2.length(), 0); 
+		textViewAyuda.setText(content2);
+		
+		bMantenerAplicacion = false;
+		Log.d("AccederActivity","onCreate");
 		
 		// Accion en caso de pulsar el boton de login
 		buttonAcceder.setOnClickListener(new View.OnClickListener() {
@@ -115,6 +127,8 @@ public class AccederActivity extends Activity {
 			public void onClick(View v) {
 				
 				// 1. Llamar a la Activity de crear cuenta
+				bMantenerAplicacion = true;
+				Log.d("AccederActivity","buttonCrearCuenta. bMantenerAplicacion: " + bMantenerAplicacion);
 				
 				Intent i=new Intent(AccederActivity.this, CrearCuentaActivity.class);
 				startActivity(i); 
@@ -127,9 +141,29 @@ public class AccederActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
+				
+				bMantenerAplicacion = true;
+				Log.d("AccederActivity","textViewOlvidastePass. bMantenerAplicacion: " + bMantenerAplicacion);
+				
 				// Lo que se hace es llamar al navegador con la pagina para recordar la password
 				Intent i = new Intent(Intent.ACTION_VIEW);
 				i.setData(Uri.parse(sURLForgotPassword));
+				startActivity(i);
+			}
+		});
+		
+		// Accion en caso de pulsar el texto de Olvidaste tu password
+		textViewAyuda.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				bMantenerAplicacion = true;
+				Log.d("AccederActivity","textViewAyuda. bMantenerAplicacion: " + bMantenerAplicacion);
+				
+				// Lo que se hace es llamar al navegador con la pagina para la ayuda
+				Intent i = new Intent(Intent.ACTION_VIEW);
+				i.setData(Uri.parse(sURLAyuda));
 				startActivity(i);
 			}
 		});
@@ -220,7 +254,13 @@ public class AccederActivity extends Activity {
 	@Override
 	protected void onPause() {
 		// Se fuerza a la aplicacion a salir 
-		finish();
+		
+		Log.d("AccederActivity","onPause. bMantenerAplicacion: " + bMantenerAplicacion);
+		
+		if(!bMantenerAplicacion) {
+			Log.d("AccederActivity","onPause. finish()");
+			finish();
+		}
 		
 		super.onPause();
 	}

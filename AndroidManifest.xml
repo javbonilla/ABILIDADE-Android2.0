@@ -20,14 +20,6 @@
             android:theme="@style/Theme.ActionBar"
             android:screenOrientation="portrait"
         />
-        <activity android:name=".activities.AyudaAltaPunto"
-            android:theme="@style/Theme.ActionBar"
-            android:screenOrientation="portrait"
-        />
-        <activity android:name=".activities.AyudaMapa"
-            android:theme="@style/Theme.ActionBar"
-            android:screenOrientation="portrait"
-        />
         <activity android:name=".activities.RutasAccesiblesActivity"
             android:theme="@style/Theme.ActionBar"
             android:screenOrientation="portrait"

@@ -53,7 +53,15 @@
 			android:gravity="right"
 			style="@style/loginTextoOlvidastePassword"
 			android:layout_marginTop="15dip"
-        /> 
+        />
+	    <TextView android:id="@+id/loginTextoAyuda"
+		    android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/ayuda"
+			android:gravity="right"
+			style="@style/loginTextoOlvidastePassword"
+			android:layout_marginTop="20dip"
+        />  
   </LinearLayout>
 
   <Button android:id="@+id/loginBotonCrearCuenta"

@@ -8,12 +8,12 @@ package com.devspark.sidenavigation;
 
 public final class R {
 	public static final class id {
-		public static final int side_navigation_menu = 0x7f070084;
-		public static final int side_navigation_item_text = 0x7f070082;
-		public static final int side_navigation_listview = 0x7f070085;
-		public static final int side_navigation_outside_view = 0x7f070083;
-		public static final int side_navigation_item_icon = 0x7f070081;
-		public static final int shadow = 0x7f070086;
+		public static final int side_navigation_menu = 0x7f070068;
+		public static final int side_navigation_item_text = 0x7f070066;
+		public static final int side_navigation_listview = 0x7f070069;
+		public static final int side_navigation_outside_view = 0x7f070067;
+		public static final int side_navigation_item_icon = 0x7f070065;
+		public static final int shadow = 0x7f07006a;
 	}
 	public static final class anim {
 		public static final int side_navigation_in_from_right = 0x7f040010;
@@ -30,13 +30,13 @@ public final class R {
 		public static final int side_navigation_item_text_color = 0x7f050003;
 	}
 	public static final class layout {
-		public static final int side_navigation_right = 0x7f03002d;
-		public static final int side_navigation_item = 0x7f03002b;
-		public static final int side_navigation_left = 0x7f03002c;
+		public static final int side_navigation_right = 0x7f03002b;
+		public static final int side_navigation_item = 0x7f030029;
+		public static final int side_navigation_left = 0x7f03002a;
 	}
 	public static final class drawable {
-		public static final int side_navigation_shadow_right = 0x7f020062;
-		public static final int side_navigation_shadow_left = 0x7f020061;
+		public static final int side_navigation_shadow_right = 0x7f02005e;
+		public static final int side_navigation_shadow_left = 0x7f02005d;
 	}
 	public static final class dimen {
 		public static final int side_navigation_item_padding_leftright = 0x7f060002;

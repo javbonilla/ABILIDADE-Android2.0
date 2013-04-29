@@ -20,7 +20,6 @@ import org.abilidade.R;
 import org.abilidade.activities.AccederActivity;
 import org.abilidade.activities.AjustesActivity;
 import org.abilidade.activities.AltaPuntoActivity;
-import org.abilidade.activities.AyudaMapa;
 import org.abilidade.activities.RutasAccesiblesActivity;
 import org.abilidade.application.AbilidadeApplication;
 import org.abilidade.map_components.OverlayItemPunto;
@@ -272,10 +271,10 @@ public class MapaActivity extends GDMapActivity implements LocationListener {
     			
     			return true;
     		case R.id.menuMapaAyuda:
-    			// Se muestra la ayuda de la aplicacion
-    			//TODO Aqui habra que incluir la ayuda COMPLETA de la aplicacion
-    			intent.setClass(MapaActivity.this, AyudaMapa.class);
-    			startActivity(intent);
+    			// Lo que se hace es llamar al navegador con la pagina para la ayuda
+				Intent i = new Intent(Intent.ACTION_VIEW);
+				i.setData(Uri.parse("http://abilidade.eu/r/androidhelp/help_menu_principal.htm"));
+				startActivity(i);
 				
     			return true;
     			
