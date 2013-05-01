@@ -39,14 +39,4 @@
 			style="@style/balloonTextoDireccion"
 		/>
 	</LinearLayout>
-	
-	<ImageView	android:id="@+id/balloon_cerrar" 
-	    android:layout_width="wrap_content"
-		android:layout_height="wrap_content" 
-		android:src="@drawable/balloon_overlay_close"
-		android:paddingLeft="10dip"
-		android:paddingBottom="10dip" 
-		android:paddingRight="8dip"
-		android:paddingTop="8dip"
-	/>
 </LinearLayout>

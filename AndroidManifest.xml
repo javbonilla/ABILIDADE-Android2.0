@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="org.abilidade"
-      android:versionCode="3"
-      android:versionName="3.0">
+      package="org.abilidadev2"
+      android:versionCode="5"
+      android:versionName="5.0">
     <uses-sdk android:minSdkVersion="4" />
     <application android:icon="@drawable/icon" 
     	android:label="@string/app_name"
@@ -28,16 +28,16 @@
             android:theme="@style/Theme.ActionBar"
             android:screenOrientation="portrait"
         />
-        <activity android:name="org.abilidade.activities.AccederActivity"
+        <activity android:name="org.abilidadev2.activities.AccederActivity"
             android:screenOrientation="portrait"
         />
-        <activity android:name="org.abilidade.activities.CrearCuentaActivity"
+        <activity android:name="org.abilidadev2.activities.CrearCuentaActivity"
             android:screenOrientation="portrait"
         />
-        <activity android:name="org.abilidade.activities.ConfirmarUsuarioActivity"
+        <activity android:name="org.abilidadev2.activities.ConfirmarUsuarioActivity"
             android:screenOrientation="portrait"
         />
-        <activity android:name="org.abilidade.activities.AjustesActivity"
+        <activity android:name="org.abilidadev2.activities.AjustesActivity"
             android:theme="@style/Theme.ActionBar"
             android:screenOrientation="portrait"
         />
@@ -50,11 +50,27 @@
             </intent-filter>
         </activity>
         <uses-library android:name="com.google.android.maps" />
+        <!-- CLAVE DE DESARROLLO:  AIzaSyDU-qTatkqSP7srgiuZYaWWsc-chZ-cnZg-->
+        <!-- CLAVE DE PRODUCCION:  AIzaSyDFNHADHFP_y9K2KQDNYdQk_46vsGxy9cU -->
+        <!-- CLAVE ACTIVA: PRODUCCION -->
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyDFNHADHFP_y9K2KQDNYdQk_46vsGxy9cU"
+        />
     </application>
+    <permission
+        android:name="org.abilidadev2.permission.MAPS_RECEIVE"
+        android:protectionLevel="signature"/>
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="org.abilidadev2.permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+	<uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true"/>
 </manifest>

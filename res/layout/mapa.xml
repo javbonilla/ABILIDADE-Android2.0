@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" 
+    tools:context="org.abilidadev2.mapa.MapaActivity"
     >
-    <com.google.android.maps.MapView
+    <fragment
 		android:id="@+id/activityMapaMapView"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
 	    android:clickable="true"
 	    android:enabled="true"
-	    android:apiKey="@string/googlemaps_apikey"
+	    class="com.google.android.gms.maps.SupportMapFragment"
     />
 </LinearLayout>
